@@ -20,16 +20,20 @@ import { mergeRefs } from "react-merge-refs";
 export default function Home() {
   const trackRef = useRef<HTMLDivElement>(null);
   const imagesRef = useRef(new Array());
-  const TRACK_MIN_OFFSET = -5.66;
-  const TRACK_MAX_OFFSET = -94.25;
+  const [trackSizeRef, trackBounds] = useMeasure({ debounce: 300 });
+  const [imageSizeRef, imageBounds] = useMeasure({ debounce: 300 });
+  const imageSizePercent = imageBounds.width
+    ? (imageBounds.width / trackBounds.width) * 100
+    : 11.4;
+
+  const TRACK_MIN_OFFSET = -(imageSizePercent / 2);
+  const TRACK_MAX_OFFSET = imageSizePercent / 2 - 100;
 
   const [mouseDownAt, setMouseDownAt] = useState(0);
   const [percentage, setPercentage] = useState(TRACK_MIN_OFFSET);
   const [prevPercentage, setPrevPercentage] = useState(0);
   const [windowWidth, setWindowWidth] = useState(0);
   const [scrollAmount, setScrollAmount] = useState(0);
-
-  const [ref, bounds] = useMeasure({ debounce: 300 });
 
   const isMac =
     typeof window !== "undefined"
@@ -75,14 +79,28 @@ export default function Home() {
       Math.min(delta, getDeltaClamp()),
       getDeltaClamp(true)
     );
-    setScrollAmount(Math.max(Math.min(scrollAmount + clampedDelta, 0), -2685));
-    const percentageRaw = (scrollAmount + prevPercentage) / 25;
-    console.log(percentageRaw);
+    if (percentage > TRACK_MAX_OFFSET) {
+      setScrollAmount(Math.min(scrollAmount + delta, 0));
+      console.log(scrollAmount, "limit");
+    } else {
+      setScrollAmount((prev) => prev);
+      console.log(scrollAmount, "free");
+    }
+
+    const percentageRaw = (scrollAmount - prevPercentage) / 25;
+    // console.log(
+    //   percentageRaw,
+    //   "raw",
+    //   prevPercentage,
+    //   "prev",
+    //   scrollAmount,
+    //   "scroll"
+    // );
     const nextPercentage = Math.max(
       Math.min(percentageRaw, TRACK_MIN_OFFSET),
       TRACK_MAX_OFFSET
     );
-
+    console.log(nextPercentage);
     setPercentage(nextPercentage);
     debouncedEnd(percentage);
   }
@@ -95,7 +113,7 @@ export default function Home() {
   function handleMouseUp() {
     setMouseDownAt(0);
     setPrevPercentage(percentage);
-    console.log(prevPercentage, "mouse");
+    console.log(percentage, "mouse");
   }
 
   function handleOnMove(e: any) {
@@ -168,7 +186,10 @@ export default function Home() {
       <div className={styles.crossContainer}>
         <CrossIcon />
       </div>
-      <div ref={mergeRefs([trackRef, ref])} className={styles.imagesContainer}>
+      <div
+        ref={mergeRefs([trackRef, trackSizeRef])}
+        className={styles.imagesContainer}
+      >
         {Array(8)
           .fill("")
           .map((val, i) => {
@@ -177,6 +198,7 @@ export default function Home() {
                 image={`/images/p${i + 1}/img_1.jpg`}
                 key={i}
                 ref={imagesRef}
+                sizeRef={imageSizeRef}
               />
             );
           })}

@@ -4,10 +4,11 @@ import { forwardRef } from "react";
 
 type Props = {
   image: string;
+  sizeRef: any;
 };
 
 export const TrackImage = forwardRef(function TrackImage(
-  { image }: Props,
+  { image, sizeRef }: Props,
   ref: any
 ) {
   function addToRefsArray(el: any) {
@@ -16,7 +17,7 @@ export const TrackImage = forwardRef(function TrackImage(
     }
   }
   return (
-    <div className={styles.imageWrapper}>
+    <div ref={sizeRef} className={styles.imageWrapper}>
       <Image
         alt=""
         ref={addToRefsArray}
