@@ -1,14 +1,16 @@
 import Image from "next/image";
 import styles from "./track-image.module.css";
 import { forwardRef } from "react";
+import { motion } from "framer-motion";
 
 type Props = {
   image: string;
   sizeRef: any;
+  layoutId: string;
 };
 
 export const TrackImage = forwardRef(function TrackImage(
-  { image, sizeRef }: Props,
+  { image, sizeRef, layoutId }: Props,
   ref: any
 ) {
   function addToRefsArray(el: any) {
@@ -17,7 +19,11 @@ export const TrackImage = forwardRef(function TrackImage(
     }
   }
   return (
-    <div ref={sizeRef} className={styles.imageWrapper}>
+    <motion.div
+      ref={sizeRef}
+      className={styles.imageWrapper}
+      layoutId={layoutId}
+    >
       <Image
         alt=""
         ref={addToRefsArray}
@@ -29,6 +35,6 @@ export const TrackImage = forwardRef(function TrackImage(
         priority
         draggable={false}
       />
-    </div>
+    </motion.div>
   );
 });

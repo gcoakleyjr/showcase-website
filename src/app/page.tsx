@@ -16,6 +16,8 @@ import styles from "./page.module.css";
 import { CrossIcon } from "@/components/cross";
 import debounce from "lodash/debounce";
 import { mergeRefs } from "react-merge-refs";
+import { NumberScroller } from "@/components/number-scroller";
+import Image from "next/image";
 
 export default function Home() {
   const trackRef = useRef<HTMLDivElement>(null);
@@ -28,6 +30,7 @@ export default function Home() {
 
   const TRACK_MIN_OFFSET = imageSizePercent / 2;
   const TRACK_MAX_OFFSET = 100 - imageSizePercent / 2;
+  const DIVISION_WIDTH = trackBounds.width ? trackBounds.width / 8 : 1;
 
   const [mouseDownAt, setMouseDownAt] = useState(0);
   const [percentage, setPercentage] = useState(TRACK_MIN_OFFSET);
@@ -35,9 +38,11 @@ export default function Home() {
   const [windowWidth, setWindowWidth] = useState(0);
   const [scrollPosition, setScrollPosition] = useState(0);
 
+  const CURRENT_IMAGE = Math.max(Math.ceil(scrollPosition / DIVISION_WIDTH), 1);
+
   //Mouse Wheel Event functions
   const debouncedEnd = useMemo(() => {
-    return debounce((value) => handleWheelEnd(value), 100);
+    return debounce((value) => handleWheelEnd(value), 15);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -169,50 +174,13 @@ export default function Home() {
                 key={i}
                 ref={imagesRef}
                 sizeRef={imageSizeRef}
+                layoutId={`image${i}`}
               />
             );
           })}
       </div>
+
+      <NumberScroller current={CURRENT_IMAGE} />
     </motion.main>
   );
 }
-
-// const [ref, bounds] = useMeasure({ debounce: 300 });
-// const dragControls = useDragControls();
-// const x = useMotionValue(0);
-// const halfX = useTransform(x, (value) => value / 2);
-
-// return (
-//   <main
-//     className={styles.main}
-//     onPointerDown={(e) => dragControls.start(e)}
-//     style={{ touchAction: "none" }}
-//   >
-//     <NavBar />
-//     <motion.div
-//       style={{
-//         width: bounds.width,
-//         x,
-//         pointerEvents: "none",
-//       }}
-//       drag="x"
-//       dragControls={dragControls}
-//       dragListener={false}
-//       dragConstraints={{
-//         right: 0,
-//         left: Number(`-${bounds.width * 2}`),
-//       }}
-//     />
-//     <motion.div
-//       className={styles.imagesContainer}
-//       ref={ref}
-//       style={{ x: halfX }}
-//     >
-//       {Array(8)
-//         .fill("")
-//         .map((val, i) => {
-//           return <TrackImage image={`/images/p${i + 1}/img_1.jpg`} key={i} />;
-//         })}
-//     </motion.div>
-//   </main>
-// );
