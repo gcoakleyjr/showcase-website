@@ -20,43 +20,24 @@ import { mergeRefs } from "react-merge-refs";
 export default function Home() {
   const trackRef = useRef<HTMLDivElement>(null);
   const imagesRef = useRef(new Array());
-  const [trackSizeRef, trackBounds] = useMeasure({ debounce: 300 });
-  const [imageSizeRef, imageBounds] = useMeasure({ debounce: 300 });
+  const [trackSizeRef, trackBounds] = useMeasure({ debounce: 100 });
+  const [imageSizeRef, imageBounds] = useMeasure({ debounce: 100 });
   const imageSizePercent = imageBounds.width
     ? (imageBounds.width / trackBounds.width) * 100
     : 11.4;
 
-  const TRACK_MIN_OFFSET = -(imageSizePercent / 2);
-  const TRACK_MAX_OFFSET = imageSizePercent / 2 - 100;
+  const TRACK_MIN_OFFSET = imageSizePercent / 2;
+  const TRACK_MAX_OFFSET = 100 - imageSizePercent / 2;
 
   const [mouseDownAt, setMouseDownAt] = useState(0);
   const [percentage, setPercentage] = useState(TRACK_MIN_OFFSET);
   const [prevPercentage, setPrevPercentage] = useState(0);
   const [windowWidth, setWindowWidth] = useState(0);
-  const [scrollAmount, setScrollAmount] = useState(0);
-
-  const isMac =
-    typeof window !== "undefined"
-      ? navigator.userAgent.toUpperCase().indexOf("MAC") >= 0
-      : false;
-  const isWindows =
-    typeof window !== "undefined"
-      ? navigator.userAgent.toUpperCase().indexOf("WIN") >= 0
-      : false;
-
-  function getDeltaClamp(min?: boolean) {
-    if (isMac) {
-      return min ? -46 : 46;
-    } else if (isWindows) {
-      return min ? -20 : 20;
-    } else {
-      return min ? -40 : 40;
-    }
-  }
+  const [scrollPosition, setScrollPosition] = useState(0);
 
   //Mouse Wheel Event functions
   const debouncedEnd = useMemo(() => {
-    return debounce((value) => handleWheelEnd(value), 200);
+    return debounce((value) => handleWheelEnd(value), 100);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -69,40 +50,28 @@ export default function Home() {
 
   function handleWheelEnd(value: number) {
     setPrevPercentage(value);
-    console.log(value, "wheel");
   }
 
-  function handleWheelScroll(e: any) {
-    const { deltaY, deltaX } = e;
-    const delta = deltaX + deltaY;
-    const clampedDelta = Math.max(
-      Math.min(delta, getDeltaClamp()),
-      getDeltaClamp(true)
-    );
-    if (percentage > TRACK_MAX_OFFSET) {
-      setScrollAmount(Math.min(scrollAmount + delta, 0));
-      console.log(scrollAmount, "limit");
-    } else {
-      setScrollAmount((prev) => prev);
-      console.log(scrollAmount, "free");
-    }
+  function handleWheelScroll(event: any) {
+    const scrollDelta = event.deltaY * 1.4;
+    const newScrollPosition = scrollPosition + scrollDelta;
 
-    const percentageRaw = (scrollAmount - prevPercentage) / 25;
-    // console.log(
-    //   percentageRaw,
-    //   "raw",
-    //   prevPercentage,
-    //   "prev",
-    //   scrollAmount,
-    //   "scroll"
-    // );
-    const nextPercentage = Math.max(
-      Math.min(percentageRaw, TRACK_MIN_OFFSET),
-      TRACK_MAX_OFFSET
+    // Ensure the newScrollPositionX remains within the box limits
+    const clampedScrollPosition = Math.max(
+      0,
+      Math.min(newScrollPosition, trackBounds.width)
     );
-    console.log(nextPercentage);
+
+    setScrollPosition(clampedScrollPosition);
+    const scrollPercentage = (scrollPosition / trackBounds.width) * 100;
+
+    const nextPercentage = Math.max(
+      Math.min(scrollPercentage, TRACK_MAX_OFFSET),
+      TRACK_MIN_OFFSET
+    );
+
     setPercentage(nextPercentage);
-    debouncedEnd(percentage);
+    debouncedEnd(nextPercentage);
   }
 
   //Mouse Click Event Handlers
@@ -113,7 +82,6 @@ export default function Home() {
   function handleMouseUp() {
     setMouseDownAt(0);
     setPrevPercentage(percentage);
-    console.log(percentage, "mouse");
   }
 
   function handleOnMove(e: any) {
@@ -123,19 +91,21 @@ export default function Home() {
     const delta = mouseDownAt - e.clientX;
     const maxDelta = windowWidth / 1.5;
 
-    const percentageRaw = (delta / maxDelta) * -100;
+    const percentageRaw = (delta / maxDelta) * 100;
     const nextPercentageRaw = prevPercentage + percentageRaw;
     const nextPercentage = Math.max(
-      Math.min(nextPercentageRaw, TRACK_MIN_OFFSET),
-      TRACK_MAX_OFFSET
+      Math.min(nextPercentageRaw, TRACK_MAX_OFFSET),
+      TRACK_MIN_OFFSET
     );
+    setScrollPosition((trackBounds.width * nextPercentage) / 100);
 
     setPercentage(nextPercentage);
   }
 
+  //Animates the Images
   trackRef.current?.animate(
     {
-      transform: `translate(${percentage}%, -50%)`,
+      transform: `translate(-${percentage}%, -50%)`,
     },
     { duration: 1500, fill: "forwards", easing: "cubic-bezier(.26,.1,.63,.94)" }
   );
@@ -143,7 +113,7 @@ export default function Home() {
   for (let i = 0; i < imagesRef.current.length; i++) {
     imagesRef.current[i].animate(
       {
-        objectPosition: `${100 + percentage}% center`,
+        objectPosition: `${100 + -percentage}% center`,
       },
       {
         duration: 1500,
