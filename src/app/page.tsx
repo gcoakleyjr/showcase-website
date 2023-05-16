@@ -38,6 +38,17 @@ export default function Home() {
   const [windowWidth, setWindowWidth] = useState(0);
   const [scrollPosition, setScrollPosition] = useState(0);
 
+  const [isDragging, setIsDragging] = useState(false);
+  const [selected, setSelected] = useState<number | null>(null);
+
+  function handleSelectionClick(i: number) {
+    if (!isDragging) {
+      setSelected(i);
+    }
+  }
+
+  console.log(selected);
+
   const CURRENT_IMAGE = Math.max(Math.ceil(scrollPosition / DIVISION_WIDTH), 1);
 
   //Mouse Wheel Event functions
@@ -82,12 +93,22 @@ export default function Home() {
   //Mouse Click Event Handlers
   function handleMouseDown(e: any) {
     setMouseDownAt(e.clientX);
+    setIsDragging(true);
   }
 
   function handleMouseUp() {
     setMouseDownAt(0);
     setPrevPercentage(percentage);
+    debounceDragState();
   }
+
+  const debounceDragState = debounce(() => setIsDragging(false), 0);
+
+  useEffect(() => {
+    return () => {
+      debounceDragState.cancel();
+    };
+  }, []);
 
   function handleOnMove(e: any) {
     if (mouseDownAt === 0) {
@@ -175,6 +196,7 @@ export default function Home() {
                 ref={imagesRef}
                 sizeRef={imageSizeRef}
                 layoutId={`image${i}`}
+                onClick={() => handleSelectionClick(i)}
               />
             );
           })}

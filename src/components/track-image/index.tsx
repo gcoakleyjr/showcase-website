@@ -7,10 +7,11 @@ type Props = {
   image: string;
   sizeRef: any;
   layoutId: string;
+  onClick: () => void;
 };
 
 export const TrackImage = forwardRef(function TrackImage(
-  { image, sizeRef, layoutId }: Props,
+  { image, sizeRef, layoutId, onClick }: Props,
   ref: any
 ) {
   function addToRefsArray(el: any) {
@@ -23,6 +24,7 @@ export const TrackImage = forwardRef(function TrackImage(
       ref={sizeRef}
       className={styles.imageWrapper}
       layoutId={layoutId}
+      onClick={onClick}
     >
       <Image
         alt=""
