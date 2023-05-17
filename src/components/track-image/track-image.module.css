@@ -2,5 +2,6 @@
     position: relative;
     width: 36vmin;
     height: 51vmin;
-    user-select: none
+    user-select: none;
+    overflow: hidden
   }

@@ -7,11 +7,12 @@ type Props = {
   image: string;
   sizeRef: any;
   layoutId: string;
-  onClick: () => void;
+  onMouseDown: () => void;
+  onMouseUp: () => void;
 };
 
 export const TrackImage = forwardRef(function TrackImage(
-  { image, sizeRef, layoutId, onClick }: Props,
+  { image, sizeRef, layoutId, onMouseDown, onMouseUp }: Props,
   ref: any
 ) {
   function addToRefsArray(el: any) {
@@ -24,14 +25,19 @@ export const TrackImage = forwardRef(function TrackImage(
       ref={sizeRef}
       className={styles.imageWrapper}
       layoutId={layoutId}
-      onClick={onClick}
+      onMouseDown={onMouseDown}
+      onMouseUp={onMouseUp}
+      transition={{ duration: 0.6, ease: [0.11, 0.46, 0.46, 0.92] }}
     >
       <Image
         alt=""
         ref={addToRefsArray}
         src={image}
         fill
-        style={{ objectFit: "cover", objectPosition: "94.44% center" }}
+        style={{
+          objectFit: "cover",
+          objectPosition: "94.44% center",
+        }}
         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         quality={100}
         priority
