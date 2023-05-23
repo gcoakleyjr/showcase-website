@@ -1,9 +1,7 @@
 .main {
   display: flex;
-  flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  padding: 3rem;
   min-height: 100vh;
   position: relative;
   overflow: hidden;
@@ -26,9 +24,7 @@
 
 .imagesContainer {
   display: flex;
+  margin-left: 50%;
   gap: 4vmin;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-5.696%, -50%);
+  position: static
 }

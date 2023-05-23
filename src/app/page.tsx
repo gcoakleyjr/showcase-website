@@ -1,26 +1,17 @@
 "use client";
 import { NavBar } from "@/components/narbar";
 import { TrackImage } from "@/components/track-image";
-import { MouseEvent, useEffect, useMemo, useRef, useState } from "react";
-import {
-  motion,
-  useMotionValue,
-  useVelocity,
-  useTransform,
-  useSpring,
-  useDragControls,
-  PanInfo,
-} from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
 import useMeasure from "react-use-measure";
 import styles from "./page.module.css";
 import { CrossIcon } from "@/components/cross";
 import debounce from "lodash/debounce";
-import { mergeRefs } from "react-merge-refs";
 import { NumberScroller } from "@/components/number-scroller";
-import Image from "next/image";
+import { useCarouselMotion } from "@/utilities/carousel-motion";
 
 export default function Home() {
-  const trackRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef(new Array());
   const imagesRef = useRef(new Array());
   const [trackSizeRef, trackBounds] = useMeasure({ debounce: 100 });
   const [imageSizeRef, imageBounds] = useMeasure({ debounce: 100 });
@@ -31,18 +22,44 @@ export default function Home() {
   const TRACK_MIN_OFFSET = imageSizePercent / 2;
   const TRACK_MAX_OFFSET = 100 - imageSizePercent / 2;
   const DIVISION_WIDTH = trackBounds.width ? trackBounds.width / 8 : 1;
+  const CAROUSEL_ANIMATION_TIME = 1500;
 
-  const [mouseDownAt, setMouseDownAt] = useState(0);
-  const [percentage, setPercentage] = useState(TRACK_MIN_OFFSET);
-  const [prevPercentage, setPrevPercentage] = useState(0);
-  const [windowWidth, setWindowWidth] = useState(0);
-  const [scrollPosition, setScrollPosition] = useState(0);
-
+  const { percentage, scrollPosition } = useCarouselMotion(
+    trackBounds.width,
+    TRACK_MIN_OFFSET,
+    TRACK_MAX_OFFSET
+  );
   const [selected, setSelected] = useState<number | null>(null);
+  const [prevSelected, setPrevSelected] = useState<number | null>(null);
+  const [isOpening, setIsOpening] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
+  const [selectedOrigin, setSelectedOrigin] = useState([0, 0]);
   const isDragging = useRef(false);
 
+  const CURRENT_IMAGE = Math.max(Math.ceil(scrollPosition / DIVISION_WIDTH), 1);
+  const CAROUSEL_DRAGX = `translateX(${
+    percentage * -1 * (100 / imageSizePercent)
+  }%)`;
+  const CAROUSEL_SELECTEDX = `translate(${selectedOrigin[0]}px, ${selectedOrigin[1]}px)`;
+
   function handleSelectionClick(i: number) {
+    //get newX translate for image position after click
+    const imgRect = document
+      .getElementById(`image${i}`)
+      ?.getBoundingClientRect();
+    const newX = (imgRect?.left || 0) + window.scrollX;
+    const newY = (imgRect?.top || 0) + window.scrollY;
+
+    if (i === selected) {
+      setPrevSelected(i);
+      setIsClosing(true);
+      debouncedIsClosing();
+      setSelected(null);
+      return;
+    }
     isDragging.current = true;
+    setIsOpening(true);
+    setSelectedOrigin([newX, newY]);
     handleSelection(i);
   }
 
@@ -51,139 +68,91 @@ export default function Home() {
     setSelected(i);
   }, 200);
 
+  const debouncedIsClosing = debounce(() => {
+    setIsClosing(false);
+    setPrevSelected(null);
+  }, 2700);
+
+  const debouncedIsOpening = debounce(() => {
+    setIsClosing(false);
+  }, 1);
+
   useEffect(() => {
     return () => {
       handleSelection.cancel();
+      debouncedIsClosing.cancel();
+      debouncedIsOpening.cancel();
     };
   }, []);
 
-  const CURRENT_IMAGE = Math.max(Math.ceil(scrollPosition / DIVISION_WIDTH), 1);
-
-  //Mouse Wheel Event functions
-  const debouncedEnd = useMemo(() => {
-    return debounce((value) => handleWheelEnd(value), 15);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    return () => {
-      debouncedEnd.cancel();
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  function handleWheelEnd(value: number) {
-    setPrevPercentage(value);
-  }
-
-  function handleWheelScroll(event: any) {
-    const scrollDelta = event.deltaY * 1.4;
-    const newScrollPosition = scrollPosition + scrollDelta;
-
-    // Ensure the newScrollPositionX remains within the box limits
-    const clampedScrollPosition = Math.max(
-      0,
-      Math.min(newScrollPosition, trackBounds.width)
-    );
-
-    setScrollPosition(clampedScrollPosition);
-    const scrollPercentage = (scrollPosition / trackBounds.width) * 100;
-
-    const nextPercentage = Math.max(
-      Math.min(scrollPercentage, TRACK_MAX_OFFSET),
-      TRACK_MIN_OFFSET
-    );
-
-    setPercentage(nextPercentage);
-    debouncedEnd(nextPercentage);
-  }
-
-  //Mouse Click Event Handlers
-  function handleMouseDown(e: any) {
-    setMouseDownAt(e.clientX);
-  }
-
-  function handleMouseUp() {
-    setMouseDownAt(0);
-    setPrevPercentage(percentage);
-  }
-
-  function handleOnMove(e: any) {
-    if (mouseDownAt === 0) {
-      return;
-    }
-    const delta = mouseDownAt - e.clientX;
-    const maxDelta = windowWidth / 1.5;
-
-    const percentageRaw = (delta / maxDelta) * 100;
-    const nextPercentageRaw = prevPercentage + percentageRaw;
-    const nextPercentage = Math.max(
-      Math.min(nextPercentageRaw, TRACK_MAX_OFFSET),
-      TRACK_MIN_OFFSET
-    );
-    setScrollPosition((trackBounds.width * nextPercentage) / 100);
-
-    setPercentage(nextPercentage);
-  }
-
+  //
+  //
   //Animates the Images
-  trackRef.current?.animate(
-    {
-      transform: `translate(-${percentage}%, -50%)`,
-    },
-    { duration: 1500, fill: "forwards", easing: "cubic-bezier(.26,.1,.63,.94)" }
-  );
+
+  for (let i = 0; i < imagesRef.current.length; i++) {
+    if (selected === i) {
+      cardRef.current[i].animate(
+        {
+          transform: [CAROUSEL_SELECTEDX, "translate(0, 0)"],
+        },
+        {
+          duration: 700,
+          fill: "forwards",
+          easing: "cubic-bezier(.23, .32, .53, .99)",
+          origin: "0% 0%",
+        }
+      );
+    } else if (prevSelected === i) {
+      cardRef.current[i].animate(
+        {
+          transform: ["translate(0, 0)", CAROUSEL_SELECTEDX],
+        },
+        {
+          duration: 2700,
+          fill: "forwards",
+          easing: "cubic-bezier(.23, .32, .53, .99)",
+          origin: "0% 0%",
+        }
+      );
+    } else {
+      cardRef.current[i].animate(
+        {
+          transform: CAROUSEL_DRAGX,
+        },
+        {
+          duration: CAROUSEL_ANIMATION_TIME,
+          fill: "forwards",
+          easing: "cubic-bezier(.26,.1,.63,.94)",
+          origin: "0 0",
+        }
+      );
+    }
+  }
 
   for (let i = 0; i < imagesRef.current.length; i++) {
     imagesRef.current[i].animate(
       {
-        objectPosition: `${100 + -percentage}% center`,
+        objectPosition:
+          selected === i
+            ? [`${100 + -percentage}% 50%`, "50% 50%"]
+            : `${100 + -percentage}% center`,
       },
       {
-        duration: 1500,
+        duration: CAROUSEL_ANIMATION_TIME,
         fill: "forwards",
         easing: "cubic-bezier(.26,.1,.63,.94)",
+        origin: "0 0",
       }
     );
   }
 
-  //Event handlers ran once
-  useEffect(() => {
-    const handleWindowResize = () => {
-      setWindowWidth(window.innerWidth);
-    };
-    handleWindowResize();
-    window.addEventListener("resize", handleWindowResize);
-    window.addEventListener("mousedown", handleMouseDown);
-
-    return () => {
-      window.removeEventListener("resize", handleWindowResize);
-      window.removeEventListener("mousedown", handleMouseDown);
-    };
-  }, []);
-
-  //Event handler constant update
-  useEffect(() => {
-    window.addEventListener("mousemove", handleOnMove);
-    window.addEventListener("mouseup", handleMouseUp);
-    window.addEventListener("wheel", handleWheelScroll);
-    return () => {
-      window.removeEventListener("mousemove", handleOnMove);
-      window.removeEventListener("mouseup", handleMouseUp);
-      window.removeEventListener("wheel", handleWheelScroll);
-    };
-  });
-
   return (
     <motion.main className={styles.main} whileTap={{ cursor: "grabbing" }}>
-      <NavBar />
+      {/* <NavBar /> */}
       <div className={styles.crossContainer}>
         <CrossIcon />
       </div>
-      <div
-        ref={mergeRefs([trackRef, trackSizeRef])}
-        className={styles.imagesContainer}
-      >
+      <div ref={trackSizeRef} className={styles.imagesContainer}>
         {Array(8)
           .fill("")
           .map((val, i) => {
@@ -193,15 +162,18 @@ export default function Home() {
                 key={i}
                 ref={imagesRef}
                 sizeRef={imageSizeRef}
+                cardRef={cardRef}
                 layoutId={`image${i}`}
                 onMouseDown={() => handleSelectionClick(i)}
                 onMouseUp={() => (isDragging.current = false)}
+                selected={selected === i}
+                prevSelected={prevSelected === i}
               />
             );
           })}
       </div>
 
-      {selected && (
+      {/* {selected && (
         <motion.img
           src={`/images/p${selected + 1}/img_1.jpg`}
           alt=""
@@ -218,7 +190,7 @@ export default function Home() {
           onClick={() => setSelected(null)}
           transition={{ duration: 0.6, ease: [0.11, 0.46, 0.46, 0.92] }}
         />
-      )}
+      )} */}
 
       <NumberScroller current={CURRENT_IMAGE} />
     </motion.main>
