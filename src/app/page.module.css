@@ -4,7 +4,7 @@
   align-items: center;
   min-height: 100vh;
   position: relative;
-  overflow: hidden;
+  overflow-x: hidden;
   user-select: none;
   cursor: grab;
 }

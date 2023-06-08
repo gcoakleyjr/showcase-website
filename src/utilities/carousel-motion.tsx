@@ -7,7 +7,7 @@ export function useCarouselMotion(
   trackMaxOffset: number
 ) {
   const [mouseDownAt, setMouseDownAt] = useState(0);
-  const [percentage, setPercentage] = useState(0);
+  const [percentage, setPercentage] = useState(trackMinOffset);
   const [prevPercentage, setPrevPercentage] = useState(0);
   const [windowWidth, setWindowWidth] = useState(0);
   const [scrollPosition, setScrollPosition] = useState(0);
