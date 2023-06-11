@@ -82,9 +82,8 @@ export const IMAGE_SELECTOR_MOTION: Variants = {
   },
   exit: {
     transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.1,
-      ease: "easeOuit",
+      staggerChildren: 0.05,
+      ease: "easeOut",
     },
   },
 };

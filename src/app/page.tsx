@@ -25,14 +25,14 @@ gsap.registerPlugin(Flip);
 gsap.registerPlugin(ScrollTrigger);
 
 export default function Home() {
+  const imagesArray = getImages();
+
   const imagesRef = useRef(new Array());
   const trackRef = useRef(null);
   const pageRef = useRef(null);
-
-  const imagesArray = getImages();
-
   const [trackSizeRef, trackBounds] = useMeasure({ debounce: 100 });
   const [imageSizeRef, imageBounds] = useMeasure({ debounce: 100 });
+
   const imageSizePercent = imageBounds.width
     ? (imageBounds.width / trackBounds.width) * 100
     : 11.4;
@@ -40,23 +40,22 @@ export default function Home() {
   const TRACK_MIN_OFFSET = imageSizePercent / 2;
   const TRACK_MAX_OFFSET = 100 - imageSizePercent / 2;
   const DIVISION_WIDTH = trackBounds.width ? trackBounds.width / 8 : 1;
-  const CAROUSEL_ANIMATION_TIME = 1500;
 
   const { percentage, scrollPosition } = useCarouselMotion(
     trackBounds.width,
     TRACK_MIN_OFFSET,
     TRACK_MAX_OFFSET
   );
+
   const [selected, setSelected] = useState<number | null>(null);
   const [selectedSource, setSelectedSource] = useState<imageProps | null>(null);
+  const [innerProjectSelected, setInnerProjectSelected] = useState(0);
   const [layoutState, setLayoutState] = useState<any>();
+  const [animating, setAnimating] = useState(false);
 
   const isDragging = useRef(false);
 
   const CURRENT_IMAGE = Math.max(Math.ceil(scrollPosition / DIVISION_WIDTH), 1);
-  const CAROUSEL_DRAGX = `translateX(${
-    percentage * -1 * (100 / imageSizePercent)
-  }%)`;
 
   const page = gsap.utils.selector(pageRef);
   const ctx = useRef<any>(null);
@@ -68,6 +67,8 @@ export default function Home() {
       duration: 1.2,
       targets: page(".c-image"),
       ease: "power4.out",
+      onStart: () => setAnimating(true),
+      onComplete: () => setAnimating(false),
     });
 
     return () => {
@@ -107,6 +108,7 @@ export default function Home() {
     }
     isDragging.current = true;
     setSelectedSource(image);
+    setInnerProjectSelected(0);
     handleSelection(i);
   }
 
@@ -122,6 +124,19 @@ export default function Home() {
       handleSelection.cancel();
     };
   }, []);
+
+  function handleRightImageChange() {
+    if (animating) return;
+    if (innerProjectSelected >= Number(selectedSource?.images.length) - 1)
+      return;
+    setInnerProjectSelected((prev) => prev + 1);
+  }
+
+  function handleLeftImageChange() {
+    if (animating) return;
+    if (innerProjectSelected === 0) return;
+    setInnerProjectSelected((prev) => prev - 1);
+  }
 
   return (
     <motion.main
@@ -162,23 +177,35 @@ export default function Home() {
             height: "100vh",
             position: "absolute",
             overflow: "hidden",
+            zIndex: 90,
           }}
           className="c-image"
           data-flip-id={`img-${selected}`}
         >
-          <img
-            src={selectedSource?.images[0]}
-            alt=""
-            style={{
-              width: "100%",
-              height: "100%",
-              objectFit: "cover",
+          <motion.div
+            style={{ display: "flex", width: "100%", height: "100%" }}
+            animate={{ x: `${innerProjectSelected * -100}%` }}
+            transition={{
+              duration: 1,
+              type: "tween",
+              ease: [0.11, 0.46, 0.46, 0.92],
             }}
-            onClick={() => {
-              setSelected(null);
-              setLayoutState(Flip.getState(page(".c-image")));
-            }}
-          />
+          >
+            {selectedSource?.images.map((image) => {
+              return (
+                <img
+                  key={image}
+                  src={image}
+                  alt=""
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                  }}
+                />
+              );
+            })}
+          </motion.div>
         </div>
       )}
 
@@ -199,6 +226,49 @@ export default function Home() {
               pointerEvents: "none",
             }}
           >
+            <div style={{ position: "absolute", top: "45px", left: "45px" }}>
+              <span
+                style={{
+                  fontSize: "50px",
+                  padding: "8px 14px",
+                  cursor: "pointer",
+                  pointerEvents: "auto",
+                  position: "relative",
+                  zIndex: 110,
+                }}
+                onClick={() => {
+                  setSelected(null);
+                  setInnerProjectSelected(0);
+                  setLayoutState(Flip.getState(page(".c-image")));
+                }}
+              >
+                Back
+              </span>
+            </div>
+
+            <div
+              style={{
+                position: "absolute",
+                top: 0,
+                bottom: 0,
+                left: 0,
+                right: "50%",
+                pointerEvents: "auto",
+              }}
+              onClick={handleLeftImageChange}
+            />
+            <div
+              style={{
+                position: "absolute",
+                top: 0,
+                bottom: 0,
+                left: "50%",
+                right: 0,
+                pointerEvents: "auto",
+              }}
+              onClick={handleRightImageChange}
+            />
+
             <div
               style={{
                 width: "75%",
@@ -211,9 +281,14 @@ export default function Home() {
               <div style={{ height: "80px", overflow: "hidden" }}>
                 <motion.h1
                   initial={{ y: 85 }}
-                  animate={{ y: 0 }}
-                  exit={{ y: -85 }}
-                  transition={{ duration: 0.6, ease: "easeOut", delay: 0.3 }}
+                  animate={{
+                    y: 0,
+                    transition: { duration: 0.6, ease: "easeOut", delay: 0.3 },
+                  }}
+                  exit={{
+                    y: -85,
+                    transition: { duration: 0.3, ease: "easeOut" },
+                  }}
                   style={{ fontWeight: 400, fontSize: "70px" }}
                 >
                   {selectedSource?.title}
