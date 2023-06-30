@@ -14,18 +14,17 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { gsap } from "gsap";
 import { Flip } from "gsap/Flip";
 import { mergeRefs } from "react-merge-refs";
-import {
-  IMAGE_SELECTOR_ITEM_MOTION,
-  IMAGE_SELECTOR_MOTION,
-  getImages,
-  imageProps,
-} from "@/utilities/util";
+import { getImages, imageProps, preloadImages } from "@/utilities/util";
+import { ImageOverlay } from "@/components/image-overlay";
 
 gsap.registerPlugin(Flip);
 gsap.registerPlugin(ScrollTrigger);
 
 export default function Home() {
-  const imagesArray = getImages();
+  const imagesLinks = getImages();
+
+  const imagesArray = preloadImages(imagesLinks);
+  console.log(imagesArray);
 
   const imagesRef = useRef(new Array());
   const trackRef = useRef(null);
@@ -125,19 +124,6 @@ export default function Home() {
     };
   }, []);
 
-  function handleRightImageChange() {
-    if (animating) return;
-    if (innerProjectSelected >= Number(selectedSource?.images.length) - 1)
-      return;
-    setInnerProjectSelected((prev) => prev + 1);
-  }
-
-  function handleLeftImageChange() {
-    if (animating) return;
-    if (innerProjectSelected === 0) return;
-    setInnerProjectSelected((prev) => prev - 1);
-  }
-
   return (
     <motion.main
       className={`${styles.main} page`}
@@ -182,156 +168,36 @@ export default function Home() {
           className="c-image"
           data-flip-id={`img-${selected}`}
         >
-          <motion.div
-            style={{ display: "flex", width: "100%", height: "100%" }}
-            animate={{ x: `${innerProjectSelected * -100}%` }}
-            transition={{
-              duration: 1,
-              type: "tween",
-              ease: [0.11, 0.46, 0.46, 0.92],
-            }}
-          >
-            {selectedSource?.images.map((image) => {
+          <div style={{ display: "flex", width: "100%", height: "100%" }}>
+            {selectedSource?.images.map((image, i) => {
               return (
                 <img
-                  key={image}
                   src={image}
+                  key={image}
                   alt=""
                   style={{
-                    width: "100%",
-                    height: "100%",
+                    width: innerProjectSelected === i ? "100%" : 0,
                     objectFit: "cover",
+                    transition:
+                      "width 1.3s cubic-bezier(0.11, 0.46, 0.46, 0.92)",
                   }}
                 />
               );
             })}
-          </motion.div>
+          </div>
         </div>
       )}
 
-      <AnimatePresence>
-        {selected && (
-          <motion.div
-            key="overlay"
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              width: "100vw",
-              height: "100vh",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              zIndex: 100,
-              pointerEvents: "none",
-            }}
-          >
-            <div style={{ position: "absolute", top: "45px", left: "45px" }}>
-              <span
-                style={{
-                  fontSize: "50px",
-                  padding: "8px 14px",
-                  cursor: "pointer",
-                  pointerEvents: "auto",
-                  position: "relative",
-                  zIndex: 110,
-                }}
-                onClick={() => {
-                  setSelected(null);
-                  setInnerProjectSelected(0);
-                  setLayoutState(Flip.getState(page(".c-image")));
-                }}
-              >
-                Back
-              </span>
-            </div>
-
-            <div
-              style={{
-                position: "absolute",
-                top: 0,
-                bottom: 0,
-                left: 0,
-                right: "50%",
-                pointerEvents: "auto",
-              }}
-              onClick={handleLeftImageChange}
-            />
-            <div
-              style={{
-                position: "absolute",
-                top: 0,
-                bottom: 0,
-                left: "50%",
-                right: 0,
-                pointerEvents: "auto",
-              }}
-              onClick={handleRightImageChange}
-            />
-
-            <div
-              style={{
-                width: "75%",
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <CrossIcon />
-              <div style={{ height: "80px", overflow: "hidden" }}>
-                <motion.h1
-                  initial={{ y: 85 }}
-                  animate={{
-                    y: 0,
-                    transition: { duration: 0.6, ease: "easeOut", delay: 0.3 },
-                  }}
-                  exit={{
-                    y: -85,
-                    transition: { duration: 0.3, ease: "easeOut" },
-                  }}
-                  style={{ fontWeight: 400, fontSize: "70px" }}
-                >
-                  {selectedSource?.title}
-                </motion.h1>
-              </div>
-
-              <CrossIcon />
-            </div>
-            <motion.div
-              variants={IMAGE_SELECTOR_MOTION}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-              key="nested-images"
-              style={{
-                position: "absolute",
-
-                display: "flex",
-                height: "100px",
-                right: "45px",
-                bottom: "45px",
-                gap: "8px",
-              }}
-            >
-              {selectedSource?.images.map((image, i) => {
-                return (
-                  <motion.img
-                    key={i}
-                    src={image}
-                    alt=""
-                    variants={IMAGE_SELECTOR_ITEM_MOTION}
-                    transition={{
-                      duration: 0.5,
-                      ease: "easeOut",
-                      type: "tween",
-                    }}
-                  />
-                );
-              })}
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <ImageOverlay
+        selected={selected}
+        setSelected={setSelected}
+        setInnerProjectSelected={setInnerProjectSelected}
+        setLayoutState={setLayoutState}
+        page={page}
+        selectedSource={selectedSource}
+        animating={animating}
+        innerProjectSelected={innerProjectSelected}
+      />
 
       <NumberScroller current={CURRENT_IMAGE} />
     </motion.main>
