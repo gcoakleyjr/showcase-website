@@ -31,17 +31,16 @@ export const TrackImage = forwardRef(function TrackImage(
           onMouseUp={onMouseUp}
           data-flip-id={`img-${index}`}
         >
-          <Image
+          <img
             alt=""
             ref={addToRefsArray}
             src={image}
             style={{
               objectFit: "cover",
+              position: "absolute",
+              width: "100%",
+              height: "100%",
             }}
-            fill
-            quality={100}
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 70vw, 53vw"
-            priority
             draggable={false}
           />
         </div>

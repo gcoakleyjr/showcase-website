@@ -16,7 +16,6 @@ import { Flip } from "gsap/Flip";
 import { mergeRefs } from "react-merge-refs";
 import { getImages, imageProps, preloadImages } from "@/utilities/util";
 import { ImageOverlay } from "@/components/image-overlay";
-import Image from "next/image";
 
 gsap.registerPlugin(Flip);
 gsap.registerPlugin(ScrollTrigger);
@@ -171,27 +170,17 @@ export default function Home() {
           <div style={{ display: "flex", width: "100%", height: "100%" }}>
             {selectedSource?.images.map((image, i) => {
               return (
-                <div
+                <img
+                  src={image}
                   key={image}
+                  alt=""
                   style={{
                     width: innerProjectSelected === i ? "100%" : 0,
+                    objectFit: "cover",
                     transition:
                       "width 1.3s cubic-bezier(0.11, 0.46, 0.46, 0.92)",
-                    overflow: "hidden",
-                    position: "relative",
                   }}
-                >
-                  <Image
-                    src={image}
-                    fill
-                    quality={100}
-                    alt=""
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 80vw"
-                    style={{
-                      objectFit: "cover",
-                    }}
-                  />
-                </div>
+                />
               );
             })}
           </div>

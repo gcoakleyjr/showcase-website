@@ -8,7 +8,6 @@ import {
 import { Dispatch, SetStateAction } from "react";
 import { Flip } from "gsap/Flip";
 import { gsap } from "gsap";
-import Image from "next/image";
 
 gsap.registerPlugin(Flip);
 
@@ -172,27 +171,17 @@ export function ImageOverlay({
                   }}
                   onClick={() => setInnerProjectSelected(i)}
                 >
-                  <motion.div
+                  <motion.img
+                    src={image}
+                    alt=""
+                    style={{ height: "100%" }}
                     variants={IMAGE_SELECTOR_ITEM_MOTION}
                     transition={{
                       duration: 0.5,
                       ease: "easeOut",
                       type: "tween",
                     }}
-                    style={{
-                      height: "100%",
-                      width: "100%",
-                      position: "relative",
-                    }}
-                  >
-                    <Image
-                      src={image}
-                      alt=""
-                      height={100}
-                      width={160}
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 80vw"
-                    />
-                  </motion.div>
+                  />
 
                   {innerProjectSelected === i && (
                     <motion.div
