@@ -32,6 +32,8 @@ export function ImageOverlay({
   selectedSource,
   animating,
 }: Props) {
+  const sourceLength = selectedSource ? selectedSource.images.length : 1;
+
   function handleRightImageChange() {
     if (animating) return;
     if (innerProjectSelected >= Number(selectedSource?.images.length) - 1)
@@ -122,7 +124,13 @@ export function ImageOverlay({
               alignItems: "center",
             }}
           >
-            <CrossIcon />
+            <motion.div
+              animate={{ rotateZ: 90 * innerProjectSelected }}
+              transition={{ duration: 1.3, ease: [0.11, 0.46, 0.46, 0.92] }}
+            >
+              <CrossIcon />
+            </motion.div>
+
             <div style={{ height: "80px", overflow: "hidden" }}>
               <motion.h1
                 initial={{ y: 85 }}
@@ -139,8 +147,12 @@ export function ImageOverlay({
                 {selectedSource?.title}
               </motion.h1>
             </div>
-
-            <CrossIcon />
+            <motion.div
+              animate={{ rotateZ: 90 * innerProjectSelected }}
+              transition={{ duration: 1.3, ease: [0.11, 0.46, 0.46, 0.92] }}
+            >
+              <CrossIcon />
+            </motion.div>
           </div>
           <motion.div
             variants={IMAGE_SELECTOR_MOTION}
@@ -150,14 +162,32 @@ export function ImageOverlay({
             key="nested-images"
             style={{
               position: "absolute",
-
               display: "flex",
-              height: "100px",
+              height: "50px",
               right: "45px",
               bottom: "45px",
-              gap: "8px",
             }}
           >
+            <motion.div
+              layoutId="image-selected"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1, x: `${100 * innerProjectSelected}%` }}
+              exit={{ opacity: 0, transition: { duration: 0.1 } }}
+              style={{
+                content: '""',
+                position: "absolute",
+                border: "1px solid white",
+                zIndex: 120,
+                width: `${100 / sourceLength}%`,
+                top: 0,
+                bottom: 0,
+              }}
+              transition={{
+                duration: 1.3,
+                ease: [0.11, 0.46, 0.46, 0.92],
+                delay: 0.2,
+              }}
+            />
             {selectedSource?.images.map((image, i) => {
               return (
                 <div
@@ -182,29 +212,6 @@ export function ImageOverlay({
                       type: "tween",
                     }}
                   />
-
-                  {innerProjectSelected === i && (
-                    <motion.div
-                      layoutId="image-selected"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0, transition: { duration: 0.1 } }}
-                      style={{
-                        content: '""',
-                        position: "absolute",
-                        border: "1px solid white",
-                        top: "-5px",
-                        left: "-5px",
-                        bottom: "-5px",
-                        right: "-5px",
-                      }}
-                      transition={{
-                        duration: 1.3,
-                        ease: [0.11, 0.46, 0.46, 0.92],
-                        delay: 0.2,
-                      }}
-                    />
-                  )}
                 </div>
               );
             })}

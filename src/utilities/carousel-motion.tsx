@@ -31,8 +31,8 @@ export function useCarouselMotion(
     setPrevPercentage(value);
   }
 
-  function handleWheelScroll(event: any) {
-    const scrollDelta = event.deltaY * 1.4;
+  function handleWheelScroll(event: WheelEvent) {
+    const scrollDelta = (event.deltaY + event.deltaX) * 1.4;
     const newScrollPosition = scrollPosition + scrollDelta;
 
     // Ensure the newScrollPositionX remains within the box limits
