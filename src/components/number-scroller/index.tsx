@@ -10,13 +10,12 @@ export function NumberScroller({ current }: Props) {
   const [scope, animate] = useAnimate();
 
   useEffect(() => {
-    animate(scope.current, { y: current * 20 - 90 }, { duration: 0.55 });
+    animate(scope.current, { y: current * 20 - 81 }, { duration: 0.55 });
   }, [current]);
 
   return (
     <div className={styles.numberScroller}>
       <div ref={scope} className={styles.numberWheel}>
-        <span className={styles.number}>8</span>
         <span className={styles.number}>7</span>
         <span className={styles.number}>6</span>
         <span className={styles.number}>5</span>
@@ -26,7 +25,7 @@ export function NumberScroller({ current }: Props) {
         <span className={styles.number}>1</span>
       </div>
       <div style={{ margin: "0 8px" }}>—</div>
-      <div>8</div>
+      <div>7</div>
     </div>
   );
 }

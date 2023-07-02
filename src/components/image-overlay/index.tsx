@@ -17,6 +17,7 @@ type Props = {
   setSelected: Dispatch<SetStateAction<number | null>>;
   setInnerProjectSelected: (e: any) => void;
   setLayoutState: any;
+  setThumbLayoutState: any;
   page: gsap.utils.SelectorFunc;
   selectedSource: imageProps | null;
   animating: boolean;
@@ -29,12 +30,11 @@ export function ImageOverlay({
   setInnerProjectSelected,
   innerProjectSelected,
   setLayoutState,
+  setThumbLayoutState,
   page,
   selectedSource,
   animating,
 }: Props) {
-  const sourceLength = selectedSource ? selectedSource.images.length : 1;
-
   function handleRightImageChange() {
     if (animating) return;
     if (innerProjectSelected >= Number(selectedSource?.images.length) - 1)
@@ -88,6 +88,7 @@ export function ImageOverlay({
                 setSelected(null);
                 setInnerProjectSelected(0);
                 setLayoutState(Flip.getState(page(".c-image")));
+                setThumbLayoutState(Flip.getState(page(".d-image")));
               }}
             >
               Back
@@ -155,68 +156,6 @@ export function ImageOverlay({
               <CrossIcon />
             </motion.div>
           </div>
-          <motion.div
-            variants={IMAGE_SELECTOR_MOTION}
-            initial="initial"
-            animate="animate"
-            exit="exit"
-            key="nested-images"
-            style={{
-              position: "absolute",
-              display: "flex",
-              height: "50px",
-              right: "45px",
-              bottom: "45px",
-            }}
-          >
-            <motion.div
-              layoutId="image-selected"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1, x: `${100 * innerProjectSelected}%` }}
-              exit={{ opacity: 0, transition: { duration: 0.1 } }}
-              style={{
-                content: '""',
-                position: "absolute",
-                border: "1px solid white",
-                zIndex: 120,
-                width: `${100 / sourceLength}%`,
-                top: 0,
-                bottom: 0,
-              }}
-              transition={{
-                duration: 1.3,
-                ease: [0.11, 0.46, 0.46, 0.92],
-                delay: 0.2,
-              }}
-            />
-            {selectedSource?.images.map((image, i) => {
-              return (
-                <div
-                  key={i}
-                  style={{
-                    position: "relative",
-                    height: "100%",
-                    pointerEvents: "auto",
-                    zIndex: 110,
-                    cursor: "pointer",
-                  }}
-                  onClick={() => setInnerProjectSelected(i)}
-                >
-                  <motion.img
-                    src={image}
-                    alt=""
-                    style={{ height: "100%" }}
-                    variants={IMAGE_SELECTOR_ITEM_MOTION}
-                    transition={{
-                      duration: 0.5,
-                      ease: "easeOut",
-                      type: "tween",
-                    }}
-                  />
-                </div>
-              );
-            })}
-          </motion.div>
         </motion.div>
       )}
     </AnimatePresence>

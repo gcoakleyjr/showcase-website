@@ -23,28 +23,26 @@ export const TrackImage = forwardRef(function TrackImage(
 
   return (
     <div className={styles.cardWrapper}>
-      {!selected && (
-        <div
-          ref={sizeRef}
-          className={`${styles.imageWrapper} c-image`}
-          onMouseDown={onMouseDown}
-          onMouseUp={onMouseUp}
-          data-flip-id={`img-${index}`}
-        >
-          <img
-            alt=""
-            ref={addToRefsArray}
-            src={image}
-            style={{
-              objectFit: "cover",
-              position: "absolute",
-              width: "100%",
-              height: "100%",
-            }}
-            draggable={false}
-          />
-        </div>
-      )}
+      <div
+        ref={sizeRef}
+        className={`${styles.imageWrapper} c-image d-image`}
+        onMouseDown={onMouseDown}
+        onMouseUp={onMouseUp}
+        data-flip-id={`img-${index}`}
+      >
+        <img
+          alt=""
+          ref={addToRefsArray}
+          src={image}
+          style={{
+            objectFit: "cover",
+            position: "absolute",
+            width: "100%",
+            height: "100%",
+          }}
+          draggable={false}
+        />
+      </div>
     </div>
   );
 });
