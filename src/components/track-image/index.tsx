@@ -1,11 +1,11 @@
 import Image from "next/image";
 import styles from "./track-image.module.css";
-import { forwardRef } from "react";
+import { MouseEventHandler, forwardRef } from "react";
 
 type Props = {
   image: string;
   sizeRef: any;
-  onMouseDown: () => void;
+  onMouseDown: MouseEventHandler<HTMLDivElement>;
   onMouseUp: () => void;
   selected: boolean;
   index: number;

@@ -2,7 +2,7 @@
 import { NavBar } from "@/components/narbar";
 import { TrackImage } from "@/components/track-image";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import useMeasure from "react-use-measure";
 import styles from "./page.module.css";
 import { CrossIcon } from "@/components/cross";
@@ -14,16 +14,14 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { gsap } from "gsap";
 import { Flip } from "gsap/Flip";
 import { mergeRefs } from "react-merge-refs";
-import { getImages, imageProps, preloadImages } from "@/utilities/util";
+import { getImages, imageProps } from "@/utilities/util";
 import { ImageOverlay } from "@/components/image-overlay";
 
 gsap.registerPlugin(Flip);
 gsap.registerPlugin(ScrollTrigger);
 
 export default function Home() {
-  const imageLinks = getImages();
-
-  const imagesArray = preloadImages(imageLinks);
+  const imagesArray = getImages();
 
   const imagesRef = useRef(new Array());
   const trackRef = useRef(null);
@@ -99,7 +97,8 @@ export default function Home() {
     });
   }, [percentage]);
 
-  function handleSelectionClick(i: number, image: imageProps) {
+  function handleSelectionClick(e: MouseEvent, i: number, image: imageProps) {
+    if (e.button === 2) return;
     if (i === selected) {
       setSelected(null);
       return;
@@ -145,7 +144,7 @@ export default function Home() {
               key={i}
               ref={imagesRef}
               sizeRef={imageSizeRef}
-              onMouseDown={() => handleSelectionClick(i, val)}
+              onMouseDown={(e: any) => handleSelectionClick(e, i, val)}
               onMouseUp={() => (isDragging.current = false)}
               selected={selected === i}
               index={i}
@@ -197,6 +196,23 @@ export default function Home() {
         animating={animating}
         innerProjectSelected={innerProjectSelected}
       />
+      {imagesArray.map((image) => {
+        return image.images.map((img) => {
+          return (
+            <div
+              style={{
+                position: "absolute",
+                height: 0,
+                width: 0,
+                bottom: 0,
+                left: 0,
+              }}
+            >
+              <img src={img} style={{ width: 0, height: 0 }} />
+            </div>
+          );
+        });
+      })}
 
       <NumberScroller current={CURRENT_IMAGE} />
     </motion.main>

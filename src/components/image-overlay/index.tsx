@@ -1,3 +1,4 @@
+"use client";
 import { AnimatePresence, motion } from "framer-motion";
 import { CrossIcon } from "../cross";
 import {
@@ -142,7 +143,7 @@ export function ImageOverlay({
                   y: -85,
                   transition: { duration: 0.3, ease: "easeOut" },
                 }}
-                style={{ fontWeight: 400, fontSize: "70px" }}
+                style={{ fontWeight: 400, fontSize: "70px", opacity: 0.93 }}
               >
                 {selectedSource?.title}
               </motion.h1>
