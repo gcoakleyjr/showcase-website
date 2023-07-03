@@ -82,18 +82,28 @@ export function useCarouselMotion(
 
     setPercentage(nextPercentage);
   }
+
+  function handleTouchMove(e: TouchEvent) {
+    handleOnMove(e.touches[0]);
+  }
+
   //Event handlers ran once
   useEffect(() => {
     const handleWindowResize = () => {
       setWindowWidth(window.innerWidth);
     };
     handleWindowResize();
+    function handleTouchStart(e: TouchEvent) {
+      handleMouseDown(e.touches[0]);
+    }
     window.addEventListener("resize", handleWindowResize);
     window.addEventListener("mousedown", handleMouseDown);
+    window.addEventListener("touchstart", handleTouchStart);
 
     return () => {
       window.removeEventListener("resize", handleWindowResize);
       window.removeEventListener("mousedown", handleMouseDown);
+      window.removeEventListener("touchstart", handleTouchStart);
     };
   }, []);
 
@@ -102,10 +112,14 @@ export function useCarouselMotion(
     window.addEventListener("mousemove", handleOnMove);
     window.addEventListener("mouseup", handleMouseUp);
     window.addEventListener("wheel", handleWheelScroll);
+    window.addEventListener("touchmove", handleTouchMove);
+    window.addEventListener("touchend", handleMouseUp);
     return () => {
       window.removeEventListener("mousemove", handleOnMove);
       window.removeEventListener("mouseup", handleMouseUp);
       window.removeEventListener("wheel", handleWheelScroll);
+      window.removeEventListener("touchmove", handleTouchMove);
+      window.removeEventListener("touchend", handleMouseUp);
     };
   });
 

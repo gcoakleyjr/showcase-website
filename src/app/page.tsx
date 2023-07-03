@@ -155,7 +155,6 @@ export default function Home() {
                 sizeRef={imageSizeRef}
                 onMouseDown={(e: any) => handleSelectionClick(e, i, val)}
                 onMouseUp={() => (isDragging.current = false)}
-                selected={selected === i}
                 index={i}
               />
             );

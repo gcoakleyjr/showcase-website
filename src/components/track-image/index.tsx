@@ -7,12 +7,11 @@ type Props = {
   sizeRef: any;
   onMouseDown: MouseEventHandler<HTMLDivElement>;
   onMouseUp: () => void;
-  selected: boolean;
   index: number;
 };
 
 export const TrackImage = forwardRef(function TrackImage(
-  { image, sizeRef, onMouseDown, onMouseUp, selected, index }: Props,
+  { image, sizeRef, onMouseDown, onMouseUp, index }: Props,
   ref: any
 ) {
   function addToRefsArray(el: any) {
