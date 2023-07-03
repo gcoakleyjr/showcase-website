@@ -2,7 +2,6 @@
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  min-height: 100vh;
   height: 100vh;
   position: relative;
   overflow-x: hidden;
@@ -63,5 +62,9 @@ z-index: 100;
 
   .selectedImage {
     right: 0
+  }
+
+  .main {
+    height: 100dvh;
   }
 }
