@@ -23,3 +23,27 @@
     right: 0;
     z-index: 10;
   }
+
+  @media screen and (max-width: 1050px) { 
+    .imageWrapper {
+      width: 49vmin;
+      height: 70vmin;
+    }
+  
+    .cardWrapper {
+      width: 49vmin;
+      height: 70vmin;
+    }
+  }
+
+  @media screen and (max-width: 500px) { 
+    .imageWrapper {
+      width: 65vmin;
+      height: 92vmin;
+    }
+  
+    .cardWrapper {
+      width: 65vmin;
+      height: 92vmin;
+    }
+  }

@@ -25,7 +25,7 @@ export const TrackImage = forwardRef(function TrackImage(
     <div className={styles.cardWrapper}>
       <div
         ref={sizeRef}
-        className={`${styles.imageWrapper} c-image d-image`}
+        className={`${styles.imageWrapper} c-image`}
         onMouseDown={onMouseDown}
         onMouseUp={onMouseUp}
         data-flip-id={`img-${index}`}

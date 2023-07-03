@@ -9,131 +9,68 @@ import {
 import { Dispatch, SetStateAction } from "react";
 import { Flip } from "gsap/Flip";
 import { gsap } from "gsap";
+import styles from "./image-overlay.module.css";
 
 gsap.registerPlugin(Flip);
 
 type Props = {
   selected: number | null;
   setSelected: Dispatch<SetStateAction<number | null>>;
-  setInnerProjectSelected: (e: any) => void;
   setLayoutState: any;
-  setThumbLayoutState: any;
   page: gsap.utils.SelectorFunc;
   selectedSource: imageProps | null;
-  animating: boolean;
-  innerProjectSelected: number;
 };
 
 export function ImageOverlay({
   selected,
   setSelected,
-  setInnerProjectSelected,
-  innerProjectSelected,
   setLayoutState,
-  setThumbLayoutState,
   page,
   selectedSource,
-  animating,
 }: Props) {
-  function handleRightImageChange() {
-    if (animating) return;
-    if (innerProjectSelected >= Number(selectedSource?.images.length) - 1)
-      return;
-    setInnerProjectSelected((prev: number) => prev + 1);
-  }
-
-  function handleLeftImageChange() {
-    if (animating) return;
-    if (innerProjectSelected === 0) return;
-    setInnerProjectSelected((prev: number) => prev - 1);
-  }
   return (
     <AnimatePresence>
-      {selected && (
+      {selected !== null && (
         <motion.div
-          key="overlay"
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100vw",
-            height: "100vh",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            zIndex: 100,
-            pointerEvents: "none",
-          }}
+          key={`item-${selected}`}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className={styles.overlayWrapper}
         >
-          <div style={{ position: "absolute", top: "45px", left: "45px" }}>
-            <motion.span
-              initial={{ opacity: 0 }}
-              animate={{
-                opacity: 1,
-                transition: { duration: 0.6, ease: "easeOut", delay: 0.3 },
-              }}
-              exit={{
-                opacity: 0,
-                transition: { duration: 0.3, ease: "easeOut" },
-              }}
-              style={{
-                fontSize: "50px",
-                padding: "8px 14px",
-                cursor: "pointer",
-                pointerEvents: "auto",
-                position: "relative",
-                zIndex: 110,
-              }}
-              onClick={() => {
-                setSelected(null);
-                setInnerProjectSelected(0);
-                setLayoutState(Flip.getState(page(".c-image")));
-                setThumbLayoutState(Flip.getState(page(".d-image")));
-              }}
-            >
-              Back
-            </motion.span>
-          </div>
-
-          <div
-            style={{
-              position: "absolute",
-              top: 0,
-              bottom: 0,
-              left: 0,
-              right: "50%",
-              pointerEvents: "auto",
+          <motion.span
+            initial={{ opacity: 0, y: `0.25em` }}
+            animate={{
+              opacity: 1,
+              y: 0,
+              transition: {
+                duration: 0.6,
+                ease: [0.2, 0.65, 0.3, 0.9],
+                delay: 1,
+              },
             }}
-            onClick={handleLeftImageChange}
-          />
-          <div
-            style={{
-              position: "absolute",
-              top: 0,
-              bottom: 0,
-              left: "50%",
-              right: 0,
-              pointerEvents: "auto",
+            exit={{
+              opacity: 0,
+              transition: { duration: 0.3, ease: "easeOut" },
             }}
-            onClick={handleRightImageChange}
-          />
-
-          <div
             style={{
-              width: "75%",
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
+              padding: "8px 14px 8px 0",
+              cursor: "pointer",
+              pointerEvents: "auto",
+              position: "relative",
+              zIndex: 110,
+              marginBottom: "20px",
+            }}
+            onClick={() => {
+              setSelected(null);
+              setLayoutState(Flip.getState(page(".c-image")));
             }}
           >
-            <motion.div
-              animate={{ rotateZ: 90 * innerProjectSelected }}
-              transition={{ duration: 1.3, ease: [0.11, 0.46, 0.46, 0.92] }}
-            >
-              <CrossIcon />
-            </motion.div>
+            Back
+          </motion.span>
 
-            <div style={{ height: "80px", overflow: "hidden" }}>
+          <div className={styles.titleContainer}>
+            <div className={styles.titleWrapper}>
               <motion.h1
                 initial={{ y: 85 }}
                 animate={{
@@ -144,18 +81,92 @@ export function ImageOverlay({
                   y: -85,
                   transition: { duration: 0.3, ease: "easeOut" },
                 }}
-                style={{ fontWeight: 400, fontSize: "70px", opacity: 0.93 }}
+                className={styles.title}
               >
                 {selectedSource?.title}
               </motion.h1>
             </div>
-            <motion.div
-              animate={{ rotateZ: 90 * innerProjectSelected }}
-              transition={{ duration: 1.3, ease: [0.11, 0.46, 0.46, 0.92] }}
-            >
-              <CrossIcon />
-            </motion.div>
+            {(selectedSource?.siteLink || selectedSource?.gitLink) && (
+              <motion.span
+                initial={{ opacity: 0, y: `0.25em` }}
+                animate={{
+                  opacity: 1,
+                  y: 0,
+                  transition: {
+                    duration: 0.6,
+                    ease: [0.2, 0.65, 0.3, 0.9],
+                    delay: 0.9,
+                  },
+                }}
+                exit={{
+                  opacity: 0,
+                  transition: { duration: 0.3, ease: "easeOut" },
+                }}
+                style={{ pointerEvents: "auto" }}
+              >
+                visit<br></br>
+                {selectedSource.gitLink && (
+                  <a href={selectedSource.gitLink} target="_blank">
+                    github{selectedSource.siteLink && ", "}
+                  </a>
+                )}
+                {selectedSource.siteLink && (
+                  <a href={selectedSource.siteLink} target="_blank">
+                    website
+                  </a>
+                )}
+              </motion.span>
+            )}
           </div>
+
+          <motion.p
+            className={styles.paragraph}
+            initial={{ opacity: 0, y: `0.25em` }}
+            animate={{
+              opacity: 1,
+              y: 0,
+              transition: {
+                duration: 0.6,
+                ease: [0.2, 0.65, 0.3, 0.9],
+                delay: 0.7,
+              },
+            }}
+            exit={{
+              opacity: 0,
+              transition: { duration: 0.3, ease: "easeOut" },
+            }}
+          >
+            {selectedSource?.description}
+          </motion.p>
+
+          {selectedSource?.tech && (
+            <motion.span
+              initial={{ opacity: 0, y: `0.25em` }}
+              animate={{
+                opacity: 1,
+                y: 0,
+                transition: {
+                  duration: 0.6,
+                  ease: [0.2, 0.65, 0.3, 0.9],
+                  delay: 0.8,
+                },
+              }}
+              exit={{
+                opacity: 0,
+                transition: { duration: 0.3, ease: "easeOut" },
+              }}
+            >
+              made with <br></br>
+              {selectedSource?.tech?.map((item, i, a) => {
+                return (
+                  <span key={item}>
+                    {item}
+                    {i === a.length - 1 ? "." : ","}{" "}
+                  </span>
+                );
+              })}
+            </motion.span>
+          )}
         </motion.div>
       )}
     </AnimatePresence>

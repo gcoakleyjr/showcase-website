@@ -1,0 +1,50 @@
+.thumbnailWrapper {
+    display: flex;
+    position: absolute;
+    height: 100%;
+    width: 100vw;
+    justify-content: flex-end;
+    align-items: flex-end;
+    padding: 40px;
+    padding-bottom: 40px;
+    pointer-events: none;
+    z-index: 120;
+}
+
+.thumbnail {
+    height: 50px;
+    pointer-events: auto;
+    z-index: 110;
+    cursor: pointer;
+    width: 80px;
+    overflow: hidden;
+}
+
+@media screen and (max-width: 1600px) {
+    .thumbnailWrapper {
+        justify-content: flex-start;
+    }
+}
+
+@media screen and (max-width: 1050px) {
+    .thumbnailWrapper {
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+    }
+}
+
+@media screen and (max-width: 500px) { 
+    .thumbnailWrapper { 
+        flex-direction: row;
+        justify-content: center;
+        align-items: flex-end;
+
+    }
+
+    .thumbnail {
+        height: 30px;
+        width: 50px
+    }
+
+}

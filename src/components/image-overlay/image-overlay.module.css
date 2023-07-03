@@ -1,0 +1,96 @@
+.overlayWrapper {
+  position: absolute;
+  top: 0;
+  left: 60%;
+  height: 100%;
+  right: 0;
+  display: flex;
+  z-index: 100;
+  pointer-events: none;
+  flex-direction: column;
+  padding: 50px;
+}
+
+.titleWrapper {
+  height: 60px;
+  overflow: hidden;
+}
+
+.title {
+  font-weight: 400;
+  font-size: 50px;
+  opacity: 0.93;
+}
+
+.titleContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 120px;
+}
+
+.paragraph {
+  width: 60%;
+  color: #ffffffce;
+  line-height: 26px;
+  margin-bottom: 120px;
+}
+
+@media screen and (max-width: 1600px) {
+  .titleContainer {
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+  }
+
+  .paragraph {
+    width: 80%;
+  }
+}
+
+@media screen and (max-width: 1050px) {
+  .overlayWrapper {
+    padding-left: 70px;
+    left: 25%;
+    background: rgb(0, 0, 0);
+    background: linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 0.404) 10%
+    );
+  }
+
+  .title {
+    font-size: 40px;
+  }
+
+  .titleWrapper {
+    height: 50px;
+  }
+}
+
+@media screen and (max-width: 500px) {
+    .overlayWrapper { 
+        left: 0;
+        background: rgba(0, 0, 0, 0.555);
+        padding: 24px
+    }
+
+    .paragraph {
+        width: 100%;
+        margin-bottom: 40px;
+    }
+
+    .titleContainer {
+        margin-bottom: 40px;
+    }
+
+    .title {
+        font-size: 30px;
+      }
+    
+      .titleWrapper {
+        height: 40px;
+      }
+ }
+

@@ -3,8 +3,10 @@
   justify-content: flex-start;
   align-items: center;
   min-height: 100vh;
+  height: 100vh;
   position: relative;
   overflow-x: hidden;
+  overflow-y: hidden;
   user-select: none;
   cursor: grab;
 }
@@ -27,4 +29,39 @@
   margin-left: 50%;
   gap: 4vmin;
   position: static
+}
+
+.hiddenThumbnail {
+  height: 50px;
+  z-index: 90;
+  width: 80px;
+  position: absolute;
+  right: 250px;
+  bottom: -50px
+}
+
+.selectedImage {
+top: 0;
+left: 0;
+bottom: 0;
+right: 40%;
+height: 100vh;
+position: absolute;
+overflow: hidden;
+z-index: 100;
+
+}
+
+@media screen and (max-width: 1600px) { 
+
+  .hiddenThumbnail {
+    left: 250px
+  }
+}
+
+@media screen and (max-width: 1050px) { 
+
+  .selectedImage {
+    right: 0
+  }
 }
