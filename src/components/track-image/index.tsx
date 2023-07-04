@@ -1,4 +1,3 @@
-import Image from "next/image";
 import styles from "./track-image.module.css";
 import { MouseEventHandler, forwardRef } from "react";
 
@@ -8,10 +7,11 @@ type Props = {
   onMouseDown: MouseEventHandler<HTMLDivElement>;
   onMouseUp: () => void;
   index: number;
+  prevSelected: boolean;
 };
 
 export const TrackImage = forwardRef(function TrackImage(
-  { image, sizeRef, onMouseDown, onMouseUp, index }: Props,
+  { image, sizeRef, onMouseDown, onMouseUp, index, prevSelected }: Props,
   ref: any
 ) {
   function addToRefsArray(el: any) {
@@ -24,7 +24,8 @@ export const TrackImage = forwardRef(function TrackImage(
     <div className={styles.cardWrapper}>
       <div
         ref={sizeRef}
-        className={`${styles.imageWrapper} c-image`}
+        className={`${styles.imageWrapper} c-image `}
+        style={{ zIndex: prevSelected ? 10 : 20 }}
         onMouseDown={onMouseDown}
         onMouseUp={onMouseUp}
         data-flip-id={`img-${index}`}

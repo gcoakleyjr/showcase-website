@@ -4,9 +4,10 @@ import { useAnimate } from "framer-motion";
 
 type Props = {
   current: number;
+  selected: boolean;
 };
 
-export function NumberScroller({ current }: Props) {
+export function NumberScroller({ current, selected }: Props) {
   const [scope, animate] = useAnimate();
 
   useEffect(() => {
@@ -14,7 +15,9 @@ export function NumberScroller({ current }: Props) {
   }, [current]);
 
   return (
-    <div className={styles.numberScroller}>
+    <div
+      className={`${styles.numberScroller} ${selected ? styles.selected : ""} `}
+    >
       <div ref={scope} className={styles.numberWheel}>
         <span className={styles.number}>7</span>
         <span className={styles.number}>6</span>

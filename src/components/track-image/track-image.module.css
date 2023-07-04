@@ -1,49 +1,36 @@
 .imageWrapper {
-    position: relative;
-    width: 36vmin;
-    height: 51vmin;
-    user-select: none;
-    overflow: hidden
+  position: relative;
+  width: 36vmin;
+  height: 51vmin;
+  user-select: none;
+  overflow: hidden;
+}
+
+.cardWrapper {
+  width: 36vmin;
+  height: 51vmin;
+}
+
+@media screen and (max-width: 1050px) {
+  .imageWrapper {
+    width: 49vmin;
+    height: 70vmin;
   }
 
   .cardWrapper {
-    width: 36vmin;
-    height: 51vmin;
+    width: 49vmin;
+    height: 70vmin;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .imageWrapper {
+    width: 65vmin;
+    height: 92vmin;
   }
 
-  .card {
-    position: relative;
+  .cardWrapper {
+    width: 65vmin;
+    height: 92vmin;
   }
-
-  .cardOpen {
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 10;
-  }
-
-  @media screen and (max-width: 1050px) { 
-    .imageWrapper {
-      width: 49vmin;
-      height: 70vmin;
-    }
-  
-    .cardWrapper {
-      width: 49vmin;
-      height: 70vmin;
-    }
-  }
-
-  @media screen and (max-width: 500px) { 
-    .imageWrapper {
-      width: 65vmin;
-      height: 92vmin;
-    }
-  
-    .cardWrapper {
-      width: 65vmin;
-      height: 92vmin;
-    }
-  }
+}

@@ -19,7 +19,7 @@
   left: 0;
   bottom: 0;
   right: 0;
-  z-index: 10;
+  z-index: 20;
   pointer-events: none;
 }
 
@@ -27,7 +27,7 @@
   display: flex;
   margin-left: 50%;
   gap: 4vmin;
-  position: static
+  position: static;
 }
 
 .hiddenThumbnail {
@@ -36,32 +36,29 @@
   width: 80px;
   position: absolute;
   right: 250px;
-  bottom: -50px
+  bottom: -50px;
 }
 
 .selectedImage {
-top: 0;
-left: 0;
-bottom: 0;
-right: 40%;
-height: 100vh;
-position: absolute;
-overflow: hidden;
-z-index: 100;
-
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 40%;
+  height: 100vh;
+  position: absolute;
+  overflow: hidden;
+  z-index: 100;
 }
 
-@media screen and (max-width: 1600px) { 
-
+@media screen and (max-width: 1600px) {
   .hiddenThumbnail {
-    left: 250px
+    left: 250px;
   }
 }
 
-@media screen and (max-width: 1050px) { 
-
+@media screen and (max-width: 1050px) {
   .selectedImage {
-    right: 0
+    right: 0;
   }
 
   .main {

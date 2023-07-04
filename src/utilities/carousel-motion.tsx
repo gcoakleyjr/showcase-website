@@ -4,7 +4,8 @@ import debounce from "lodash/debounce";
 export function useCarouselMotion(
   trackWidth: number,
   trackMinOffset: number,
-  trackMaxOffset: number
+  trackMaxOffset: number,
+  selected: boolean
 ) {
   const [mouseDownAt, setMouseDownAt] = useState(0);
   const [percentage, setPercentage] = useState(trackMinOffset);
@@ -32,6 +33,7 @@ export function useCarouselMotion(
   }
 
   function handleWheelScroll(event: WheelEvent) {
+    if (selected) return;
     const scrollDelta = (event.deltaY + event.deltaX) * 1.4;
     const newScrollPosition = scrollPosition + scrollDelta;
 
@@ -65,12 +67,15 @@ export function useCarouselMotion(
     setPrevPercentage(percentage);
   }
 
-  function handleOnMove(e: any) {
+  function handleOnMove(e: any, touch?: boolean) {
     if (mouseDownAt === 0) {
       return;
     }
+    if (selected) return;
+
+    const speed = touch ? 0.5 : 1.2;
     const delta = mouseDownAt - e.clientX;
-    const maxDelta = windowWidth / 1.5;
+    const maxDelta = windowWidth / speed;
 
     const percentageRaw = (delta / maxDelta) * 100;
     const nextPercentageRaw = prevPercentage + percentageRaw;
@@ -84,7 +89,7 @@ export function useCarouselMotion(
   }
 
   function handleTouchMove(e: TouchEvent) {
-    handleOnMove(e.touches[0]);
+    handleOnMove(e.touches[0], true);
   }
 
   //Event handlers ran once

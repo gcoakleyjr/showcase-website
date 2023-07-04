@@ -32,28 +32,32 @@ export default function Home() {
 
   const imageSizePercent = imageBounds.width
     ? (imageBounds.width / trackBounds.width) * 100
-    : 11.4;
+    : 13.04;
 
   const TRACK_MIN_OFFSET = imageSizePercent / 2;
   const TRACK_MAX_OFFSET = 100 - imageSizePercent / 2;
   const DIVISION_WIDTH = trackBounds.width ? trackBounds.width / 7 : 1;
 
-  const { percentage, scrollPosition } = useCarouselMotion(
-    trackBounds.width,
-    TRACK_MIN_OFFSET,
-    TRACK_MAX_OFFSET
-  );
-
+  const [prevSelected, setPrevSelected] = useState<number>(0);
   const [selected, setSelected] = useState<number | null>(null);
   const [selectedSource, setSelectedSource] = useState<imageProps | null>(null);
   const [layoutState, setLayoutState] = useState<any>();
   const [animating, setAnimating] = useState(false);
+
+  const { percentage, scrollPosition } = useCarouselMotion(
+    trackBounds.width,
+    TRACK_MIN_OFFSET,
+    TRACK_MAX_OFFSET,
+    selected !== null
+  );
 
   const isDragging = useRef(false);
 
   const CURRENT_IMAGE =
     selected !== null
       ? selected + 1
+      : animating
+      ? prevSelected + 1
       : Math.max(Math.ceil(scrollPosition / DIVISION_WIDTH), 1);
 
   const page = gsap.utils.selector(pageRef);
@@ -118,6 +122,7 @@ export default function Home() {
 
   const handleSelection = debounce((i) => {
     if (isDragging.current) return;
+    setPrevSelected(i);
     setSelected(i);
     setLayoutState(Flip.getState(page(".c-image")));
   }, 200);
@@ -134,7 +139,7 @@ export default function Home() {
       ref={pageRef}
       whileTap={{ cursor: "grabbing" }}
     >
-      <NavBar />
+      <NavBar current="Work" />
       {!selected && (
         <div className={styles.crossContainer}>
           <CrossIcon />
@@ -156,6 +161,7 @@ export default function Home() {
                 onMouseDown={(e: any) => handleSelectionClick(e, i, val)}
                 onMouseUp={() => (isDragging.current = false)}
                 index={i}
+                prevSelected={prevSelected === i}
               />
             );
           })}
@@ -228,7 +234,7 @@ export default function Home() {
         selectedSource={selectedSource}
       />
 
-      <NumberScroller current={CURRENT_IMAGE} />
+      <NumberScroller current={CURRENT_IMAGE} selected={selected !== null} />
     </motion.main>
   );
 }

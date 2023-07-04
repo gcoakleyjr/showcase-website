@@ -1,12 +1,12 @@
 .nav {
-    font-size: 16px;
-    line-height: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 40px;
+  font-size: 16px;
+  line-height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 40px;
 }

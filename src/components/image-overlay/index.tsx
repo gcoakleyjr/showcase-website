@@ -1,11 +1,5 @@
-"use client";
 import { AnimatePresence, motion } from "framer-motion";
-import { CrossIcon } from "../cross";
-import {
-  IMAGE_SELECTOR_ITEM_MOTION,
-  IMAGE_SELECTOR_MOTION,
-  imageProps,
-} from "@/utilities/util";
+import { imageProps } from "@/utilities/util";
 import { Dispatch, SetStateAction } from "react";
 import { Flip } from "gsap/Flip";
 import { gsap } from "gsap";
@@ -60,6 +54,7 @@ export function ImageOverlay({
               position: "relative",
               zIndex: 110,
               marginBottom: "20px",
+              color: "#e7e7e7b7",
             }}
             onClick={() => {
               setSelected(null);
