@@ -2,7 +2,6 @@ import {
   AnimatePresence,
   PanInfo,
   motion,
-  useDragControls,
   useMotionValue,
   useTransform,
 } from "framer-motion";
@@ -31,11 +30,10 @@ export function ImageOverlay({
   selectedSource,
   isTouchDevice,
 }: Props) {
-  const dragControls = useDragControls();
-
   const x = useMotionValue(0);
   const y = useMotionValue(0);
   const opacity = useTransform(x, [-100, 0, 100], [0, 1, 0]);
+  const closeOpacity = useTransform(y, [0, 100], [0, 1]);
 
   function handleDragEnd(event: any, info: PanInfo) {
     if (info.offset.y > 100) {
@@ -72,10 +70,23 @@ export function ImageOverlay({
               right: 0,
               left: 0,
             }}
-            dragElastic={{ top: 0, bottom: 0.2, left: 0.1, right: 0.1 }}
+            dragElastic={{ top: 0, bottom: 0.1, left: 0.1, right: 0.1 }}
             onDragEnd={handleDragEnd}
             style={{ x, y, opacity }}
           >
+            <motion.span
+              style={{
+                position: "absolute",
+                top: "-25px",
+                left: 0,
+                right: 0,
+                display: "flex",
+                justifyContent: "center",
+                opacity: closeOpacity,
+              }}
+            >
+              close
+            </motion.span>
             <motion.span
               initial={{ opacity: 0, y: `0.25em` }}
               animate={{

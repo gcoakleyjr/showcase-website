@@ -24,9 +24,23 @@ gsap.registerPlugin(ScrollTrigger);
 export default function Home() {
   const imagesArray = getImages();
   const [isTouchDevice, setIsTouch] = useState(false);
+  const [pageLoading, setPageLoading] = useState(true);
 
   useEffect(() => {
     setIsTouch(typeof window !== "undefined" && "ontouchstart" in window);
+  }, []);
+
+  useEffect(() => {
+    const onPageLoad = () => {
+      setPageLoading(false);
+    };
+
+    if (document.readyState === "complete") {
+      onPageLoad();
+    } else {
+      window.addEventListener("load", onPageLoad);
+      return () => window.removeEventListener("load", onPageLoad);
+    }
   }, []);
 
   const imagesRef = useRef(new Array());
