@@ -23,6 +23,11 @@ gsap.registerPlugin(ScrollTrigger);
 
 export default function Home() {
   const imagesArray = getImages();
+  function isTouch() {
+    if (!window) return false;
+    return "ontouchstart" in window || navigator.maxTouchPoints > 0;
+  }
+  const isTouchDevice = isTouch();
 
   const imagesRef = useRef(new Array());
   const trackRef = useRef(null);
@@ -232,6 +237,7 @@ export default function Home() {
         setLayoutState={setLayoutState}
         page={page}
         selectedSource={selectedSource}
+        isTouchDevice={isTouchDevice}
       />
 
       <NumberScroller current={CURRENT_IMAGE} selected={selected !== null} />
