@@ -23,11 +23,11 @@ gsap.registerPlugin(ScrollTrigger);
 
 export default function Home() {
   const imagesArray = getImages();
-  function isTouch() {
-    if (!window) return false;
-    return "ontouchstart" in window || navigator.maxTouchPoints > 0;
-  }
-  const isTouchDevice = isTouch();
+  const [isTouchDevice, setIsTouch] = useState(false);
+
+  useEffect(() => {
+    setIsTouch(typeof window !== "undefined" && "ontouchstart" in window);
+  }, []);
 
   const imagesRef = useRef(new Array());
   const trackRef = useRef(null);
