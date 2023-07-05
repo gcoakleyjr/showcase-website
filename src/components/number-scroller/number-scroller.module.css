@@ -25,7 +25,7 @@
   height: 20px;
 }
 
-@media screen and (max-width: 1050px) {
+@media screen and (max-width: 500px) {
   .numberScroller.selected {
     bottom: 4.8rem;
   }

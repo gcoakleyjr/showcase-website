@@ -19,7 +19,7 @@ export function Thumbnails({
     <div className={styles.thumbnailWrapper}>
       {imagesArray.map((image, i) => {
         return (
-          <div key={i}>
+          <div className={styles.thumbnailDiv} key={i}>
             {selected !== i ? (
               <div
                 className={`${styles.thumbnail}  c-image`}

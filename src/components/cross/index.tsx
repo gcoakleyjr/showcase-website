@@ -10,9 +10,6 @@ export function CrossIcon() {
       style={{
         width: 22,
         height: 22,
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
         fill: "white",
       }}
     >
