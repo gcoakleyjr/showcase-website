@@ -32,6 +32,7 @@ export const TrackImage = forwardRef(function TrackImage(
       >
         <img
           alt=""
+          fetchPriority="high"
           ref={addToRefsArray}
           src={image}
           style={{

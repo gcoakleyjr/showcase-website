@@ -13,23 +13,23 @@ export type imageProps = {
 export function getImages(): imageProps[] {
   const library: imageProps[] = [
     {
-      title: "Eyeland Framez",
-      tech: ["react", "stipe", "nodejs", "mongodb"],
-      siteLink: "https://www.eyelandframez.com",
-      gitLink: "https://github.com/gcoakleyjr/eyeland-frames-client",
-      images:
-        "https://res.cloudinary.com/dx1cp4cj9/image/upload/q_60/v1688265871/eyelandframez_atmfid.webp",
-      description:
-        "Ecommerce client project displaying a wide range of fashion eye-wear. Node.js REST API used to fetch user and product data from MongoDB storage. Uses Stripe for purchasing, JSON Web Tokens for authentication & Redux for state management. Developed Admin CMS Portal to display and manage shop content.",
-    },
-    {
       title: "RareCircles",
       tech: ["nextjs", "graphQL", "vanilla extract", "postgres", "golang"],
       siteLink: "https://www.rarecircles.com",
       images:
-        "https://res.cloudinary.com/dx1cp4cj9/image/upload/q_65/v1688265874/www.rarecircles.com__zebjze.webp",
+        "https://res.cloudinary.com/dx1cp4cj9/image/upload/q_72/v1688528492/rarecircle_x3a87h.webp",
       description:
         "Web3/Web2 social platform for brands to drive community engagement and gain feedback on theirproduct. Involved in the beginning architecture to continuous development. Worked on new deliveryingfeatures, graphql integrations, ui library development and animation.",
+    },
+    {
+      title: "Eyeland Framez",
+      tech: ["react", "stipe", "nodejs", "mongodb"],
+      siteLink: "https://eyelandframez.netlify.app/",
+      gitLink: "https://github.com/gcoakleyjr/eyeland-frames-client",
+      images:
+        "https://res.cloudinary.com/dx1cp4cj9/image/upload/q_59/v1688525897/eyelandframes_guxtlj.webp",
+      description:
+        "Ecommerce client project displaying a wide range of fashion eye-wear. Node.js REST API used to fetch user and product data from MongoDB storage. Uses Stripe for purchasing, JSON Web Tokens for authentication & Redux for state management. Developed Admin CMS Portal to display and manage shop content.",
     },
     {
       title: "Kijiji Mapper",
@@ -57,7 +57,7 @@ export function getImages(): imageProps[] {
       siteLink: "https://gcoakleyjr.github.io/moviewatchlist.github.io/",
       gitLink: "https://github.com/gcoakleyjr/moviewatchlist.github.io",
       images:
-        "https://res.cloudinary.com/dx1cp4cj9/image/upload/v1688358011/gappicjr_wall_of_movie_posters_c7d98aec-1613-4aa8-b723-1a39078122df_yhxtth.png",
+        "https://res.cloudinary.com/dx1cp4cj9/image/upload/q_61/v1688358011/gappicjr_wall_of_movie_posters_c7d98aec-1613-4aa8-b723-1a39078122df_yhxtth.webp",
       description:
         "A Watchlist app that saves all your favorite or soon to be favorite movies into a list that you can always come back to. Uses the IMDB Movie API and styled with CSS.",
     },

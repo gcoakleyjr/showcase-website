@@ -71,7 +71,6 @@ export default function Home() {
   );
 
   const isDragging = useRef(false);
-  console.log(animating);
   const CURRENT_IMAGE =
     selected !== null
       ? selected + 1
@@ -198,6 +197,7 @@ export default function Home() {
                 <img
                   src={image.images}
                   key={image.images}
+                  fetchPriority="high"
                   alt=""
                   style={{
                     objectFit: "cover",

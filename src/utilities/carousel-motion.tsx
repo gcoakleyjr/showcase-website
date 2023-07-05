@@ -73,7 +73,7 @@ export function useCarouselMotion(
     }
     if (selected) return;
 
-    const speed = touch ? 0.5 : 1.2;
+    const speed = touch ? 0.7 : 1.2;
     const delta = mouseDownAt - e.clientX;
     const maxDelta = windowWidth / speed;
 
