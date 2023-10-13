@@ -15,7 +15,9 @@ export default function About() {
         <div className={styles.textWrapper}>
           <header style={{ width: "90%" }}>
             <p>
-              <span className={styles.spans}>I'm a design driven Software</span>
+              <span
+                className={styles.spans}
+              >{`I'm a design driven Software`}</span>
               <span className={styles.spans}>
                 Developer with years of experience
               </span>
