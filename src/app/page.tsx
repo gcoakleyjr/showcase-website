@@ -10,13 +10,13 @@ import debounce from "lodash/debounce";
 import { NumberScroller } from "@/components/number-scroller";
 import { useCarouselMotion } from "@/utilities/carousel-motion";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-
 import { gsap } from "gsap";
 import { Flip } from "gsap/Flip";
 import { mergeRefs } from "react-merge-refs";
 import { getImages, imageProps } from "@/utilities/util";
 import { ImageOverlay } from "@/components/image-overlay";
 import { Thumbnails } from "@/components/thumbnail";
+import PageTransition from "@/components/page-transition";
 
 gsap.registerPlugin(Flip);
 gsap.registerPlugin(ScrollTrigger);
@@ -24,23 +24,11 @@ gsap.registerPlugin(ScrollTrigger);
 export default function Home() {
   const imagesArray = getImages();
   const [isTouchDevice, setIsTouch] = useState(false);
-  const [pageLoading, setPageLoading] = useState(true);
+
+  const [layoutState, setLayoutState] = useState<any>();
 
   useEffect(() => {
     setIsTouch(typeof window !== "undefined" && "ontouchstart" in window);
-  }, []);
-
-  useEffect(() => {
-    const onPageLoad = () => {
-      setPageLoading(false);
-    };
-
-    if (document.readyState === "complete") {
-      onPageLoad();
-    } else {
-      window.addEventListener("load", onPageLoad);
-      return () => window.removeEventListener("load", onPageLoad);
-    }
   }, []);
 
   const imagesRef = useRef(new Array());
@@ -60,7 +48,8 @@ export default function Home() {
   const [prevSelected, setPrevSelected] = useState<number>(0);
   const [selected, setSelected] = useState<number | null>(null);
   const [selectedSource, setSelectedSource] = useState<imageProps | null>(null);
-  const [layoutState, setLayoutState] = useState<any>();
+  const [opacity, setOpacity] = useState(0); //needed for initial loading
+
   const [animating, setAnimating] = useState(false);
 
   const { percentage, scrollPosition } = useCarouselMotion(
@@ -80,6 +69,25 @@ export default function Home() {
 
   const page = gsap.utils.selector(pageRef);
   const ctx = useRef<any>(null);
+
+  useEffect(() => {
+    const images = document.querySelectorAll(".loading-ani");
+
+    gsap.fromTo(
+      images,
+      {
+        opacity: 0,
+        y: 120,
+      },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 2,
+        stagger: 0.25,
+        ease: "back.out(1.7)",
+      }
+    );
+  }, []);
 
   useLayoutEffect(() => {
     if (!layoutState) return;
@@ -128,6 +136,7 @@ export default function Home() {
   }, [percentage]);
 
   function handleSelectionClick(e: MouseEvent, i: number, image: imageProps) {
+    setOpacity(1);
     if (e.button === 2) return;
     if (i === selected) {
       setSelected(null);
@@ -152,109 +161,112 @@ export default function Home() {
   }, []);
 
   return (
-    <motion.main
-      className={`${styles.main} page`}
-      ref={pageRef}
-      whileTap={{ cursor: "grabbing" }}
-    >
-      <NavBar current="Work" />
-      {!selected && (
-        <div className={styles.crossContainer}>
-          <CrossIcon />
-        </div>
-      )}
-
-      <div
-        ref={mergeRefs([trackSizeRef, trackRef])}
-        className={styles.imagesContainer}
+    <PageTransition>
+      <motion.main
+        className={`${styles.main} page`}
+        ref={pageRef}
+        whileTap={{ cursor: "grabbing" }}
       >
-        {selected === null &&
-          imagesArray.map((val, i) => {
-            return (
-              <TrackImage
-                image={val.images}
-                key={i}
-                ref={imagesRef}
-                sizeRef={imageSizeRef}
-                onMouseDown={(e: any) => handleSelectionClick(e, i, val)}
-                onMouseUp={() => (isDragging.current = false)}
-                index={i}
-                prevSelected={prevSelected === i}
-              />
-            );
-          })}
-      </div>
+        <NavBar current="Work" />
+        {!selected && (
+          <div className={styles.crossContainer}>
+            <CrossIcon />
+          </div>
+        )}
 
-      {selected !== null && (
         <div
-          key="selected"
-          className={`${styles.selectedImage} c-image`}
-          data-flip-id={`img-${selected}`}
+          ref={mergeRefs([trackSizeRef, trackRef])}
+          className={styles.imagesContainer}
         >
-          <div style={{ display: "flex", width: "100%", height: "100%" }}>
-            {imagesArray.map((image, i) => {
+          {selected === null &&
+            imagesArray.map((val, i) => {
               return (
-                <img
-                  src={image.images}
-                  key={image.images}
-                  fetchPriority="high"
-                  alt=""
-                  style={{
-                    objectFit: "cover",
-                    width: selected === i ? "100%" : 0,
-                    height: "100%",
-                    transition:
-                      "width 1.3s cubic-bezier(0.11, 0.46, 0.46, 0.92)",
-                  }}
+                <TrackImage
+                  image={val.images}
+                  opacity={opacity}
+                  key={i}
+                  ref={imagesRef}
+                  sizeRef={imageSizeRef}
+                  onMouseDown={(e: any) => handleSelectionClick(e, i, val)}
+                  onMouseUp={() => (isDragging.current = false)}
+                  index={i}
+                  prevSelected={prevSelected === i}
                 />
               );
             })}
-          </div>
         </div>
-      )}
 
-      {selected !== null && (
-        <Thumbnails
-          imagesArray={imagesArray}
+        {selected !== null && (
+          <div
+            key="selected"
+            className={`${styles.selectedImage} c-image`}
+            data-flip-id={`img-${selected}`}
+          >
+            <div style={{ display: "flex", width: "100%", height: "100%" }}>
+              {imagesArray.map((image, i) => {
+                return (
+                  <img
+                    src={image.images}
+                    key={image.images}
+                    fetchPriority="high"
+                    alt=""
+                    style={{
+                      objectFit: "cover",
+                      width: selected === i ? "100%" : 0,
+                      height: "100%",
+                      transition:
+                        "width 1.3s cubic-bezier(0.11, 0.46, 0.46, 0.92)",
+                    }}
+                  />
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {selected !== null && (
+          <Thumbnails
+            imagesArray={imagesArray}
+            selected={selected}
+            setSelected={setSelected}
+            setSelectedSource={setSelectedSource}
+          />
+        )}
+
+        {imagesArray.map((image, i) => {
+          return (
+            <div key={i}>
+              {selected === null && (
+                <div
+                  className={`${styles.hiddenThumbnail} c-image`}
+                  data-flip-id={`img-thumb`}
+                >
+                  <img
+                    src={image.images}
+                    alt=""
+                    style={{
+                      objectFit: "cover",
+                      width: "100%",
+                      height: "100%",
+                    }}
+                  />
+                </div>
+              )}
+            </div>
+          );
+        })}
+
+        <ImageOverlay
           selected={selected}
           setSelected={setSelected}
-          setSelectedSource={setSelectedSource}
+          setLayoutState={setLayoutState}
+          page={page}
+          selectedSource={selectedSource}
+          isTouchDevice={isTouchDevice}
         />
-      )}
 
-      {imagesArray.map((image, i) => {
-        return (
-          <div key={i}>
-            {selected === null && (
-              <div
-                className={`${styles.hiddenThumbnail} c-image`}
-                data-flip-id={`img-thumb`}
-              >
-                <img
-                  src={image.images}
-                  alt=""
-                  style={{
-                    objectFit: "cover",
-                    width: "100%",
-                    height: "100%",
-                  }}
-                />
-              </div>
-            )}
-          </div>
-        );
-      })}
-
-      <ImageOverlay
-        selected={selected}
-        setSelected={setSelected}
-        setLayoutState={setLayoutState}
-        page={page}
-        selectedSource={selectedSource}
-        isTouchDevice={isTouchDevice}
-      />
-
-      <NumberScroller current={CURRENT_IMAGE} selected={selected !== null} />
-    </motion.main>
+        <NumberScroller current={CURRENT_IMAGE} selected={selected !== null} />
+      </motion.main>
+    </PageTransition>
   );
 }

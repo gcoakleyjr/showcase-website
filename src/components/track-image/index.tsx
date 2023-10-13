@@ -8,10 +8,19 @@ type Props = {
   onMouseUp: () => void;
   index: number;
   prevSelected: boolean;
+  opacity: number;
 };
 
 export const TrackImage = forwardRef(function TrackImage(
-  { image, sizeRef, onMouseDown, onMouseUp, index, prevSelected }: Props,
+  {
+    image,
+    sizeRef,
+    onMouseDown,
+    onMouseUp,
+    index,
+    prevSelected,
+    opacity,
+  }: Props,
   ref: any
 ) {
   function addToRefsArray(el: any) {
@@ -24,8 +33,8 @@ export const TrackImage = forwardRef(function TrackImage(
     <div className={styles.cardWrapper}>
       <div
         ref={sizeRef}
-        className={`${styles.imageWrapper} c-image `}
-        style={{ zIndex: prevSelected ? 10 : 20 }}
+        className={`${styles.imageWrapper} c-image loading-ani`}
+        style={{ zIndex: prevSelected ? 10 : 20, opacity }}
         onMouseDown={onMouseDown}
         onMouseUp={onMouseUp}
         data-flip-id={`img-${index}`}

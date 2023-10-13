@@ -1,0 +1,13 @@
+.textWrapper {
+  font-size: 2.8125vw;
+  line-height: 3.6458vw;
+  letter-spacing: -0.02em;
+  width: 96vw;
+  padding-left: calc(50% - 64px);
+}
+
+.spans {
+  color: "white";
+  overflow: hidden;
+  display: block;
+}
