@@ -16,6 +16,7 @@ html {
   -webkit-tap-highlight-color: transparent;
   -webkit-text-size-adjust: none;
   -webkit-font-smoothing: antialiased;
+  scroll-behavior: smooth;
 }
 
 html,
