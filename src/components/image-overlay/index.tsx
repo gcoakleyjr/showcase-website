@@ -20,6 +20,8 @@ type Props = {
   page: gsap.utils.SelectorFunc;
   selectedSource: imageProps | null;
   isTouchDevice: boolean;
+  setSelectedSource: Dispatch<SetStateAction<imageProps | null>>;
+  imagesArray: imageProps[];
 };
 
 export function ImageOverlay({
@@ -29,6 +31,8 @@ export function ImageOverlay({
   page,
   selectedSource,
   isTouchDevice,
+  setSelectedSource,
+  imagesArray,
 }: Props) {
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -39,9 +43,15 @@ export function ImageOverlay({
     if (info.offset.y > 100) {
       handleClose();
     } else if (info.offset.x < -100) {
-      setSelected((prev) => (prev !== null && prev < 6 ? prev + 1 : prev));
+      const newIndex =
+        selected !== null && selected < 6 ? selected + 1 : selected;
+      setSelected(newIndex);
+      setSelectedSource(newIndex !== null ? imagesArray[newIndex] : null);
     } else if (info.offset.x > 100) {
-      setSelected((prev) => (prev !== null && prev > 0 ? prev - 1 : prev));
+      const newIndex =
+        selected !== null && selected > 0 ? selected - 1 : selected;
+      setSelected(newIndex);
+      setSelectedSource(newIndex !== null ? imagesArray[newIndex] : null);
     } else return;
   }
 

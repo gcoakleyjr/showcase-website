@@ -5,7 +5,8 @@ import styles from "./about.module.css";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import gsap from "gsap";
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
+import { createNoise2D } from "simplex-noise";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -22,7 +23,7 @@ function TextAnimation({
     hidden: {
       opacity: 0,
       scale: 1.01,
-      y: 30,
+      y: 50,
     },
     visible: {
       opacity: 1,
@@ -40,11 +41,11 @@ function TextAnimation({
     <motion.span
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: true, amount: 0.8, margin: "-100px" }}
+      viewport={{ once: true, margin: "-100px" }}
       key={text}
-      variants={lineAnimation}
+      className={styles.overflowHidden}
     >
-      {text}
+      <motion.span variants={lineAnimation}>{text}</motion.span>
     </motion.span>
   );
 }
@@ -85,22 +86,77 @@ export default function About() {
     "the songs I know on the guitar.",
   ];
 
+  const [circleArray, setCircleArray] = useState<React.ReactNode[]>([]);
+
+  useEffect(() => {
+    const noise2D = createNoise2D();
+
+    for (let i = 0; i < 500; i++) {
+      const n1 = noise2D(i * 0.003, i * 0.0033);
+      const n2 = noise2D(i * 0.002, i * 0.001);
+
+      setCircleArray((prev) => {
+        return [
+          ...prev,
+          <div
+            className={`${styles.circle} circle-ani`}
+            style={{
+              transform: `translate(${n2 * 200}px, ${i}px)  rotate(${
+                n2 * 270
+              }deg) scale(${3 + n1 * 2}, ${3 + n2 * 2})`,
+              boxShadow: `0 0 0 .2px hsla(${Math.floor(
+                i * 0.3
+              )}, 70%, 70%, .6)`,
+            }}
+            key={`circle-${i}`}
+          />,
+        ];
+      });
+    }
+  }, []);
+
+  useLayoutEffect(() => {
+    const circles = document.querySelectorAll(".circle-ani");
+
+    let ctx = gsap.context(() => {
+      const main = gsap.timeline({
+        scrollTrigger: {
+          scrub: 0.7,
+          start: "top 10px",
+          end: "bottom bottom",
+        },
+      });
+      circles.forEach((circle) => {
+        main.to(circle, {
+          opacity: 1,
+        });
+      });
+    });
+
+    return () => ctx.revert();
+  }, [circleArray]);
+
   return (
     <PageTransition>
       <NavBar current="About" />
+
       <main className={styles.pageWrapper}>
+        <div className={`${styles.circleWrapper} wrapper`}>
+          {circleArray.map((circle) => {
+            return circle;
+          })}
+        </div>
         <div className={styles.textWrapper}>
           <header style={{ width: "90%" }}>
             <p>
               {mainParagraph.map((line, i) => {
                 return (
-                  <span key={`line-${line}`}>
-                    <TextAnimation
-                      hasScrolled={hasScrolled}
-                      delayNumber={i}
-                      text={line}
-                    />
-                  </span>
+                  <TextAnimation
+                    hasScrolled={hasScrolled}
+                    delayNumber={i}
+                    text={line}
+                    key={`line-${line}`}
+                  />
                 );
               })}
             </p>
@@ -108,13 +164,12 @@ export default function About() {
             <p className={styles.paragraphs}>
               {secondParagraph.map((line, i) => {
                 return (
-                  <span key={`line-${line}`}>
-                    <TextAnimation
-                      hasScrolled={hasScrolled}
-                      delayNumber={i + 6}
-                      text={line}
-                    />
-                  </span>
+                  <TextAnimation
+                    hasScrolled={hasScrolled}
+                    delayNumber={i + 6}
+                    text={line}
+                    key={`line-${line}`}
+                  />
                 );
               })}
             </p>
@@ -130,20 +185,18 @@ export default function About() {
             </h3>
             <ul>
               <li>
-                <div>
-                  <TextAnimation
-                    hasScrolled={hasScrolled}
-                    delayNumber={14}
-                    text="Software Developer"
-                  />
-                </div>
-                <div>
-                  <TextAnimation
-                    hasScrolled={hasScrolled}
-                    delayNumber={15}
-                    text="RareCircles"
-                  />
-                </div>
+                <TextAnimation
+                  hasScrolled={hasScrolled}
+                  delayNumber={14}
+                  text="Software Developer"
+                />
+
+                <TextAnimation
+                  hasScrolled={hasScrolled}
+                  delayNumber={15}
+                  text="RareCircles"
+                />
+
                 <div className={styles.date}>
                   <TextAnimation
                     hasScrolled={hasScrolled}
@@ -153,20 +206,18 @@ export default function About() {
                 </div>
               </li>
               <li>
-                <div>
-                  <TextAnimation
-                    hasScrolled={hasScrolled}
-                    delayNumber={17}
-                    text="Junior Web Developer"
-                  />
-                </div>
-                <div>
-                  <TextAnimation
-                    hasScrolled={hasScrolled}
-                    delayNumber={18}
-                    text="100devs"
-                  />
-                </div>
+                <TextAnimation
+                  hasScrolled={hasScrolled}
+                  delayNumber={17}
+                  text="Junior Web Developer"
+                />
+
+                <TextAnimation
+                  hasScrolled={hasScrolled}
+                  delayNumber={18}
+                  text="100devs"
+                />
+
                 <div className={styles.date}>
                   <TextAnimation
                     hasScrolled={hasScrolled}
@@ -176,20 +227,18 @@ export default function About() {
                 </div>
               </li>
               <li>
-                <div>
-                  <TextAnimation
-                    hasScrolled={hasScrolled}
-                    delayNumber={20}
-                    text="Architect"
-                  />
-                </div>
-                <div>
-                  <TextAnimation
-                    hasScrolled={hasScrolled}
-                    delayNumber={21}
-                    text="Gensler"
-                  />
-                </div>
+                <TextAnimation
+                  hasScrolled={hasScrolled}
+                  delayNumber={20}
+                  text="Architect"
+                />
+
+                <TextAnimation
+                  hasScrolled={hasScrolled}
+                  delayNumber={21}
+                  text="Gensler"
+                />
+
                 <div className={styles.date}>
                   <TextAnimation
                     hasScrolled={hasScrolled}

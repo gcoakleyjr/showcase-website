@@ -263,6 +263,8 @@ export default function Home() {
           page={page}
           selectedSource={selectedSource}
           isTouchDevice={isTouchDevice}
+          setSelectedSource={setSelectedSource}
+          imagesArray={imagesArray}
         />
 
         <NumberScroller current={CURRENT_IMAGE} selected={selected !== null} />

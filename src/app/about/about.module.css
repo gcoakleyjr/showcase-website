@@ -1,9 +1,11 @@
 .pageWrapper {
   width: 100%;
-  margin-top: calc(60px + 15vw);
+  overflow: hidden;
+  position: relative;
 }
 
 .textWrapper {
+  margin-top: calc(60px + 15vw);
   font-size: 2.8125vw;
   line-height: 3.6458vw;
   letter-spacing: -0.02em;
@@ -26,6 +28,10 @@
   width: 90%;
 }
 
+.overflowHidden {
+  overflow: hidden;
+}
+
 .textWrapper ul {
   margin-left: 5vw;
 }
@@ -35,7 +41,7 @@
   margin-top: 4.1667vw;
 }
 
-.experience li > div {
+.experience li > span {
   display: block;
 
   font-size: 2.2917vw;
@@ -72,4 +78,82 @@
 
 .contact ul {
   margin-top: 4.1667vw;
+}
+.circleWrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.circle {
+  width: 40px;
+  height: 26px;
+  border-radius: 40%;
+  opacity: 0;
+  margin: -19px 25%;
+  transition: transform 1s cubic-bezier(0.14, 0.15, 0.13, 0.99);
+}
+
+@media screen and (max-width: 850px) {
+  .pageWrapper {
+    padding: 0 30px;
+  }
+
+  .circle {
+    width: 22px;
+    height: 22px;
+    margin: -19px auto;
+  }
+
+  .textWrapper {
+    margin-top: 150px;
+    font-size: 20px;
+    line-height: 30px;
+    letter-spacing: -0.02em;
+    width: 100%;
+    padding-left: 0;
+    padding-bottom: 17.7083vw;
+  }
+
+  .paragraphs {
+    margin-top: 40px;
+  }
+
+  .textWrapper section {
+    padding-top: 40px;
+    width: 100%;
+  }
+
+  .textWrapper ul {
+    margin-left: 60px;
+  }
+
+  .experience li {
+    margin-top: 20px;
+  }
+
+  .experience li > span {
+    font-size: 20px;
+    line-height: 20px;
+  }
+
+  .experience .date {
+    margin-top: 15px;
+  }
+
+  .experience .date span {
+    font-size: 14px;
+  }
+
+  .contact li a {
+    font-size: 14px;
+    line-height: 20px;
+  }
+
+  .contact ul {
+    margin-top: 30px;
+  }
 }
