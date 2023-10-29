@@ -6,7 +6,7 @@ import {
   useTransform,
 } from "framer-motion";
 import { imageProps } from "@/utilities/util";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { Flip } from "gsap/Flip";
 import { gsap } from "gsap";
 import styles from "./image-overlay.module.css";
