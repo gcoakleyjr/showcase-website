@@ -201,7 +201,7 @@ export default function About() {
                   <TextAnimation
                     hasScrolled={hasScrolled}
                     delayNumber={16}
-                    text="2021 - Present"
+                    text="2022 - Present"
                   />
                 </div>
               </li>
@@ -243,7 +243,7 @@ export default function About() {
                   <TextAnimation
                     hasScrolled={hasScrolled}
                     delayNumber={22}
-                    text="2018 - 2021"
+                    text="2018 - 2022"
                   />
                 </div>
               </li>

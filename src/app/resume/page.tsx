@@ -22,7 +22,7 @@ export default function Resume() {
       <NavBar current="Resume" />
       <iframe
         style={{ position: "absolute", top: 100 }}
-        src="Giovanni_Resume_2024.pdf"
+        src="Giovanni_Resume_Resume.pdf"
         width={windowWidth}
         height="1127"
       ></iframe>
